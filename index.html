@@ -3,86 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradingView TA Plugin</title>
+    <title>Widget de Análisis Técnico - TradingView</title>
     <style>
-        /* Asegura que el widget ocupe todo el espacio disponible en el WebView */
-        html, body {
-            height: 100%;
+        body, html {
             margin: 0;
             padding: 0;
-            background-color: #1e222d; /* Color de fondo oscuro por defecto */
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
-        #tv_widget_container {
+        
+        #tradingview-widget-container {
             width: 100%;
             height: 100%;
+        }
+        
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .controls input {
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: none;
+        }
+        
+        .controls button {
+            padding: 5px 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background-color: #0b7dda;
         }
     </style>
 </head>
 <body>
+    <div class="controls">
+        <input type="text" id="symbolInput" placeholder="Introduce un símbolo" value="SPX500">
+        <button onclick="changeSymbol()">Cambiar Símbolo</button>
+    </div>
+    
+    <div id="tradingview-widget-container">
+        <!-- El widget de TradingView se cargará aquí -->
+    </div>
 
-<div id="tv_widget_container"></div>
-
-<script>
-    // Esta función se encarga de crear o recrear el widget de TradingView con un símbolo específico.
-    function createTechnicalAnalysisWidget(symbol) {
-        // Limpiar cualquier widget existente antes de crear uno nuevo
-        document.getElementById('tv_widget_container').innerHTML = '';
-
-        // Definición de la configuración del widget
-        const widgetConfig = {
-            "interval": "1m",
-            "width": "100%", 
-            "height": "100%",
-            "symbol": symbol, // El símbolo que cTrader enviará dinámicamente
-            "showSae": false,
-            "locale": "es", // Idioma español
-            "colorTheme": "dark", // Tema oscuro, como en tu imagen
-            "displayMode": "single" // Modo de resumen simple
-        };
-
-        // Crear el elemento script y configurarlo
-        var script = document.createElement('script');
-        script.src = 's3.tradingview.com';
-        script.async = true;
-        script.text = JSON.stringify(widgetConfig);
-
-        // Añadir el script al contenedor en el cuerpo de la página
-        document.getElementById('tv_widget_container').appendChild(script);
-    }
-
-    // Esta es la función CLAVE que será llamada desde el código C# del plugin de cTrader.
-    // cTrader usará ExecuteScript() para llamar a 'setSymbol("SPX500")' por ejemplo.
-    window.setSymbol = function(symbol) {
-        console.log("cTrader ha solicitado cambiar el símbolo a: " + symbol);
-        // Formatear símbolos si es necesario para que TradingView los entienda correctamente
-        const formattedSymbol = formatSymbolForTradingView(symbol);
-        createTechnicalAnalysisWidget(formattedSymbol);
-    }
-
-    // Función auxiliar para mapear símbolos de cTrader a tickers de TradingView
-    function formatSymbolForTradingView(cTraderSymbol) {
-        // Usa un mapeo para asegurar la compatibilidad con índices globales
-        switch(cTraderSymbol) {
-            case "SPX500":
-            case "US500":
-                return "INDEX:SPX"; // Standard & Poor's 500
-            case "NAS100":
-            case "US100":
-                return "NASDAQ:NDX"; // Nasdaq 100
-            case "GER40":
-            case "DE40":
-                return "INDEX:DEU40"; // DAX 40
-            // Añade más casos para otros índices si es necesario
-            default:
-                return cTraderSymbol; // Devuelve el símbolo tal cual si no hay un mapeo especial (funciona para Forex)
+    <script>
+        // Función para mapear símbolos de cTrader a TradingView
+        function mapSymbol(symbolName) {
+            // Convertir a mayúsculas para comparación
+            const symbol = symbolName.toUpperCase();
+            
+            // Mapeo de símbolos conocidos
+            const symbolMap = {
+                'SPX500': 'INDEX:SPX',
+                'US500': 'INDEX:SPX',
+                'NAS100': 'NASDAQ:NDX',
+                'US100': 'NASDAQ:NDX',
+                'US30': 'DJ:DJI',
+                'DOW': 'DJ:DJI',
+                'GER40': 'XETR:DAX',
+                'DAX': 'XETR:DAX',
+                'UK100': 'INDEX:UKX',
+                'FTSE': 'INDEX:UKX',
+                'JPN225': 'TSE:TOPIX',
+                'NIKKEI': 'TSE:TOPIX',
+                'AUS200': 'ASX:XJO',
+                'CHN50': 'SSE:000001',
+                'EURUSD': 'FX:EURUSD',
+                'GBPUSD': 'FX:GBPUSD',
+                'USDJPY': 'FX:USDJPY',
+                'AUDUSD': 'FX:AUDUSD',
+                'USDCAD': 'FX:USDCAD',
+                'USDCHF': 'FX:USDCHF',
+                'NZDUSD': 'FX:NZDUSD',
+                'EURGBP': 'FX:EURGBP',
+                'EURJPY': 'FX:EURJPY',
+                'GBPJPY': 'FX:GBPJPY',
+                'EURCAD': 'FX:EURCAD',
+                'EURAUD': 'FX:EURAUD',
+                'GOLD': 'OANDA:XAUUSD',
+                'XAUUSD': 'OANDA:XAUUSD',
+                'SILVER': 'OANDA:XAGUSD',
+                'XAGUSD': 'OANDA:XAGUSD',
+                'OIL': 'TVC:USOIL',
+                'WTI': 'TVC:USOIL',
+                'BRENT': 'TVC:UKOIL',
+                'BTC': 'BINANCE:BTCUSDT',
+                'BTCUSD': 'BINANCE:BTCUSDT',
+                'ETH': 'BINANCE:ETHUSDT',
+                'ETHUSD': 'BINANCE:ETHUSDT'
+            };
+            
+            // Devolver el símbolo mapeado si existe, de lo contrario devolver el original
+            return symbolMap[symbol] || symbol;
         }
-    }
-
-    // Cargar un índice por defecto (ej. S&P 500) cuando la página se carga por primera vez
-    document.addEventListener('DOMContentLoaded', (event) => {
-        createTechnicalAnalysisWidget("INDEX:SPX");
-    });
-</script>
-
+        
+        // Función global para cambiar el símbolo del widget
+        function setSymbol(symbolName) {
+            const mappedSymbol = mapSymbol(symbolName);
+            
+            // Eliminar el widget existente
+            const container = document.getElementById('tradingview-widget-container');
+            container.innerHTML = '';
+            
+            // Crear un nuevo script para el widget con el símbolo actualizado
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+            script.innerHTML = JSON.stringify({
+                "interval": "1m",
+                "width": "100%",
+                "height": "100%",
+                "isTransparent": false,
+                "symbol": mappedSymbol,
+                "showIntervalTabs": true,
+                "displayMode": "single",
+                "locale": "es",
+                "colorTheme": "dark"
+            });
+            
+            container.appendChild(script);
+        }
+        
+        // Función para cambiar el símbolo desde el input
+        function changeSymbol() {
+            const symbolInput = document.getElementById('symbolInput');
+            const symbol = symbolInput.value.trim();
+            if (symbol) {
+                setSymbol(symbol);
+            }
+        }
+        
+        // Inicializar el widget con un símbolo por defecto
+        window.onload = function() {
+            setSymbol('SPX500');
+        };
+    </script>
 </body>
 </html>
