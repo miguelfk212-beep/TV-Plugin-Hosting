@@ -3,155 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widget de Análisis Técnico - TradingView</title>
+    <title>Widget de TradingView para cTrader</title>
     <style>
+        /* Asegura que el widget ocupe toda la ventana sin márgenes */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
+            overflow: hidden; /* Evita barras de desplazamiento no deseadas */
+            background-color: #1e1e1e; /* Color de fondo que coincide con el tema oscuro */
         }
         
+        /* El contenedor donde se inyectará el widget */
         #tradingview-widget-container {
             width: 100%;
             height: 100%;
         }
-        
-        .controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .controls input {
-            padding: 5px;
-            margin-right: 5px;
-            border-radius: 3px;
-            border: none;
-        }
-        
-        .controls button {
-            padding: 5px 10px;
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        
-        .controls button:hover {
-            background-color: #0b7dda;
-        }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <input type="text" id="symbolInput" placeholder="Introduce un símbolo" value="SPX500">
-        <button onclick="changeSymbol()">Cambiar Símbolo</button>
-    </div>
-    
-    <div id="tradingview-widget-container">
-        <!-- El widget de TradingView se cargará aquí -->
-    </div>
+
+    <!-- Este div es el ancla donde TradingView creará su widget -->
+    <div id="tradingview-widget-container"></div>
 
     <script>
-        // Función para mapear símbolos de cTrader a TradingView
-        function mapSymbol(symbolName) {
-            // Convertir a mayúsculas para comparación
-            const symbol = symbolName.toUpperCase();
-            
-            // Mapeo de símbolos conocidos
-            const symbolMap = {
-                'SPX500': 'INDEX:SPX',
-                'US500': 'INDEX:SPX',
-                'NAS100': 'NASDAQ:NDX',
-                'US100': 'NASDAQ:NDX',
-                'US30': 'DJ:DJI',
-                'DOW': 'DJ:DJI',
-                'GER40': 'XETR:DAX',
-                'DAX': 'XETR:DAX',
-                'UK100': 'INDEX:UKX',
-                'FTSE': 'INDEX:UKX',
-                'JPN225': 'TSE:TOPIX',
-                'NIKKEI': 'TSE:TOPIX',
-                'AUS200': 'ASX:XJO',
-                'CHN50': 'SSE:000001',
-                'EURUSD': 'FX:EURUSD',
-                'GBPUSD': 'FX:GBPUSD',
-                'USDJPY': 'FX:USDJPY',
-                'AUDUSD': 'FX:AUDUSD',
-                'USDCAD': 'FX:USDCAD',
-                'USDCHF': 'FX:USDCHF',
-                'NZDUSD': 'FX:NZDUSD',
-                'EURGBP': 'FX:EURGBP',
-                'EURJPY': 'FX:EURJPY',
-                'GBPJPY': 'FX:GBPJPY',
-                'EURCAD': 'FX:EURCAD',
-                'EURAUD': 'FX:EURAUD',
-                'GOLD': 'OANDA:XAUUSD',
-                'XAUUSD': 'OANDA:XAUUSD',
-                'SILVER': 'OANDA:XAGUSD',
-                'XAGUSD': 'OANDA:XAGUSD',
-                'OIL': 'TVC:USOIL',
-                'WTI': 'TVC:USOIL',
-                'BRENT': 'TVC:UKOIL',
-                'BTC': 'BINANCE:BTCUSDT',
-                'BTCUSD': 'BINANCE:BTCUSDT',
-                'ETH': 'BINANCE:ETHUSDT',
-                'ETHUSD': 'BINANCE:ETHUSDT'
-            };
-            
-            // Devolver el símbolo mapeado si existe, de lo contrario devolver el original
-            return symbolMap[symbol] || symbol;
-        }
-        
-        // Función global para cambiar el símbolo del widget
-        function setSymbol(symbolName) {
-            const mappedSymbol = mapSymbol(symbolName);
-            
-            // Eliminar el widget existente
+        /**
+         * Función GLOBAL para cambiar el símbolo del widget.
+         * Esta función será llamada desde el plugin de cTrader usando InvokeScript.
+         * @param {string} tradingViewTicker - El ticker final de TradingView (ej: "NASDAQ:NDX").
+         */
+        function setSymbol(tradingViewTicker) {
+            // Log para depuración. Puedes verlo en la consola de desarrollador (F12) dentro de la ventana del plugin.
+            console.log("Llamada a setSymbol con el ticker:", tradingViewTicker);
+
+            // 1. Obtener el contenedor del widget.
             const container = document.getElementById('tradingview-widget-container');
+            
+            // 2. Limpiar el contenido anterior. Esto es CRUCIAL para recargar el widget.
             container.innerHTML = '';
             
-            // Crear un nuevo script para el widget con el símbolo actualizado
+            // 3. Crear un nuevo elemento <script> para el widget de TradingView.
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.async = true;
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+            
+            // 4. Definir la configuración del widget con el nuevo símbolo.
             script.innerHTML = JSON.stringify({
-                "interval": "1m",
+                "interval": "1D", // Intervalo por defecto: 1 Día
                 "width": "100%",
                 "height": "100%",
                 "isTransparent": false,
-                "symbol": mappedSymbol,
+                "symbol": tradingViewTicker, // Usamos el ticker que nos pasaron
                 "showIntervalTabs": true,
-                "displayMode": "single",
+                "displayMode": "single", // Muestra un solo activo
                 "locale": "es",
                 "colorTheme": "dark"
             });
             
+            // 5. Añadir el nuevo script al contenedor para que se cargue.
             container.appendChild(script);
         }
-        
-        // Función para cambiar el símbolo desde el input
-        function changeSymbol() {
-            const symbolInput = document.getElementById('symbolInput');
-            const symbol = symbolInput.value.trim();
-            if (symbol) {
-                setSymbol(symbol);
-            }
+
+        /**
+         * Función para inicializar el widget con un símbolo por defecto cuando la página se carga.
+         */
+        function initializeWidget() {
+            // Puedes poner aquí un símbolo por defecto que te guste.
+            setSymbol('INDEX:SPX');
         }
-        
-        // Inicializar el widget con un símbolo por defecto
-        window.onload = function() {
-            setSymbol('SPX500');
-        };
+
+        // Ejecuta la función de inicialización cuando la página esté completamente cargada.
+        window.onload = initializeWidget;
+
     </script>
 </body>
 </html>
