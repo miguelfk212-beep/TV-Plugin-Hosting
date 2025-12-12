@@ -13,19 +13,137 @@
             width: 100%;
             overflow: hidden; /* Evita barras de desplazamiento no deseadas */
             background-color: #1e1e1e; /* Color de fondo que coincide con el tema oscuro */
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        /* Contenedor principal */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* Panel de control superior */
+        .control-panel {
+            background-color: #2a2a2a;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+        
+        /* Selector de índices */
+        .index-selector {
+            margin-right: 15px;
+        }
+        
+        select {
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+            min-width: 200px;
+        }
+        
+        /* Botón de actualización */
+        .update-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .update-button:hover {
+            background-color: #45a049;
         }
         
         /* El contenedor donde se inyectará el widget */
         #tradingview-widget-container {
+            flex-grow: 1;
             width: 100%;
-            height: 100%;
         }
     </style>
 </head>
 <body>
-
-    <!-- Este div es el ancla donde TradingView creará su widget -->
-    <div id="tradingview-widget-container"></div>
+    <div class="main-container">
+        <!-- Panel de control superior -->
+        <div class="control-panel">
+            <div class="index-selector">
+                <label for="index-select">Seleccionar Índice:</label>
+                <select id="index-select">
+                    <!-- Índices Americanos -->
+                    <optgroup label="Índices Americanos">
+                        <option value="INDEX:SPX">S&P 500</option>
+                        <option value="INDEX:DJI">Dow Jones</option>
+                        <option value="NASDAQ:NDX">NASDAQ 100</option>
+                        <option value="INDEX:RUT">Russell 2000</option>
+                        <option value="CBOE:VIX">VIX</option>
+                        <option value="INDEX:DXY">Dollar Index</option>
+                    </optgroup>
+                    
+                    <!-- Índices Europeos -->
+                    <optgroup label="Índices Europeos">
+                        <option value="INDEX:SX5E">Euro Stoxx 50</option>
+                        <option value="XETR:DAX">DAX</option>
+                        <option value="INDEX:UKX">FTSE 100</option>
+                        <option value="EURONEXT:PX1">CAC 40</option>
+                        <option value="BME:IBC">IBEX 35</option>
+                        <option value="FTSEMIB:FTSEMIB">FTSE MIB</option>
+                        <option value="SWX:SMI">SMI</option>
+                        <option value="EURONEXT:AEX">AEX</option>
+                        <option value="OMX:OMXS30">OMX Stockholm 30</option>
+                    </optgroup>
+                    
+                    <!-- Índices Asiáticos -->
+                    <optgroup label="Índices Asiáticos">
+                        <option value="INDEX:NKY">Nikkei 225</option>
+                        <option value="HSI:HSI">Hang Seng</option>
+                        <option value="SSE:000001">Shanghai Composite</option>
+                        <option value="KRX:KOSPI">KOSPI</option>
+                        <option value="ASX:XJO">ASX 200</option>
+                    </optgroup>
+                    
+                    <!-- Metales Preciosos -->
+                    <optgroup label="Metales Preciosos">
+                        <option value="TVC:GOLD">Oro</option>
+                        <option value="TVC:SILVER">Plata</option>
+                        <option value="TVC:COPPER">Cobre</option>
+                        <option value="TVC:PLATINUM">Platino</option>
+                        <option value="TVC:PALLADIUM">Paladio</option>
+                    </optgroup>
+                    
+                    <!-- Energía -->
+                    <optgroup label="Energía">
+                        <option value="TVC:USOIL">Petróleo WTI</option>
+                        <option value="TVC:UKOIL">Petróleo Brent</option>
+                        <option value="TVC:NATURALGAS">Gas Natural</option>
+                    </optgroup>
+                    
+                    <!-- Criptomonedas -->
+                    <optgroup label="Criptomonedas">
+                        <option value="BITSTAMP:BTCUSD">Bitcoin</option>
+                        <option value="BITSTAMP:ETHUSD">Ethereum</option>
+                        <option value="BITSTAMP:XRPUSD">Ripple</option>
+                        <option value="BITSTAMP:LTCUSD">Litecoin</option>
+                        <option value="BITSTAMP:ADAUSD">Cardano</option>
+                        <option value="BINANCE:SOLUSDT">Solana</option>
+                        <option value="BINANCE:DOTUSDT">Polkadot</option>
+                        <option value="BINANCE:DOGEUSDT">Dogecoin</option>
+                    </optgroup>
+                </select>
+            </div>
+            <button class="update-button" onclick="updateChart()">Actualizar Gráfico</button>
+        </div>
+        
+        <!-- Este div es el ancla donde TradingView creará su widget -->
+        <div id="tradingview-widget-container"></div>
+    </div>
 
     <script>
         /**
@@ -64,6 +182,15 @@
             
             // 5. Añadir el nuevo script al contenedor para que se cargue.
             container.appendChild(script);
+        }
+        
+        /**
+         * Función para actualizar el gráfico con el símbolo seleccionado en el menú desplegable
+         */
+        function updateChart() {
+            const selectElement = document.getElementById('index-select');
+            const selectedSymbol = selectElement.value;
+            setSymbol(selectedSymbol);
         }
 
         /**
