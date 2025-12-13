@@ -5,19 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Widget de TradingView para cTrader</title>
     <style>
-        /* Asegura que el widget ocupe toda la ventana sin márgenes */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-            overflow: hidden; /* Evita barras de desplazamiento no deseadas */
-            background-color: #1e1e1e; /* Color de fondo que coincide con el tema oscuro */
+            overflow: hidden;
+            background-color: #1e1e1e;
             font-family: Arial, sans-serif;
             color: #ffffff;
         }
         
-        /* Contenedor principal */
         .main-container {
             display: flex;
             flex-direction: column;
@@ -25,45 +23,57 @@
             width: 100%;
         }
         
-        /* Panel de control superior */
         .control-panel {
             background-color: #2a2a2a;
-            padding: 10px;
+            padding: 8px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             border-bottom: 1px solid #444;
+            flex-wrap: wrap;
         }
         
-        /* Selector de índices */
-        .index-selector {
-            margin-right: 15px;
+        .selectors-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .selector-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .selector-group label {
+            margin-right: 5px;
+            font-size: 12px;
         }
         
         select {
             background-color: #3a3a3a;
             color: #ffffff;
             border: 1px solid #555;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
-            min-width: 200px;
+            min-width: 200px; /* Un poco más ancho al ser el único selector */
+            font-size: 12px;
         }
         
-        /* Botón de actualización */
         .update-button {
-            background-color: #4CAF50;
+            background-color: #0066cc;
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 12px;
         }
         
         .update-button:hover {
-            background-color: #45a049;
+            background-color: #0052a3;
         }
         
-        /* El contenedor donde se inyectará el widget */
         #tradingview-widget-container {
             flex-grow: 1;
             width: 100%;
@@ -72,138 +82,122 @@
 </head>
 <body>
     <div class="main-container">
-        <!-- Panel de control superior -->
         <div class="control-panel">
-            <div class="index-selector">
-                <label for="index-select">Seleccionar Índice:</label>
-                <select id="index-select">
-                    <!-- Índices Americanos -->
-                    <optgroup label="Índices Americanos">
-                        <option value="INDEX:SPX">S&P 500</option>
-                        <option value="INDEX:DJI">Dow Jones</option>
-                        <option value="NASDAQ:NDX">NASDAQ 100</option>
-                        <option value="INDEX:RUT">Russell 2000</option>
-                        <option value="CBOE:VIX">VIX</option>
-                        <option value="INDEX:DXY">Dollar Index</option>
-                    </optgroup>
-                    
-                    <!-- Índices Europeos -->
-                    <optgroup label="Índices Europeos">
-                        <option value="INDEX:SX5E">Euro Stoxx 50</option>
-                        <option value="XETR:DAX">DAX</option>
-                        <option value="INDEX:UKX">FTSE 100</option>
-                        <option value="EURONEXT:PX1">CAC 40</option>
-                        <option value="BME:IBC">IBEX 35</option>
-                        <option value="FTSEMIB:FTSEMIB">FTSE MIB</option>
-                        <option value="SWX:SMI">SMI</option>
-                        <option value="EURONEXT:AEX">AEX</option>
-                        <option value="OMX:OMXS30">OMX Stockholm 30</option>
-                    </optgroup>
-                    
-                    <!-- Índices Asiáticos -->
-                    <optgroup label="Índices Asiáticos">
-                        <option value="INDEX:NKY">Nikkei 225</option>
-                        <option value="HSI:HSI">Hang Seng</option>
-                        <option value="SSE:000001">Shanghai Composite</option>
-                        <option value="KRX:KOSPI">KOSPI</option>
-                        <option value="ASX:XJO">ASX 200</option>
-                    </optgroup>
-                    
-                    <!-- Metales Preciosos -->
-                    <optgroup label="Metales Preciosos">
-                        <option value="TVC:GOLD">Oro</option>
-                        <option value="TVC:SILVER">Plata</option>
-                        <option value="TVC:COPPER">Cobre</option>
-                        <option value="TVC:PLATINUM">Platino</option>
-                        <option value="TVC:PALLADIUM">Paladio</option>
-                    </optgroup>
-                    
-                    <!-- Energía -->
-                    <optgroup label="Energía">
-                        <option value="TVC:USOIL">Petróleo WTI</option>
-                        <option value="TVC:UKOIL">Petróleo Brent</option>
-                        <option value="TVC:NATURALGAS">Gas Natural</option>
-                    </optgroup>
-                    
-                    <!-- Criptomonedas -->
-                    <optgroup label="Criptomonedas">
-                        <option value="BITSTAMP:BTCUSD">Bitcoin</option>
-                        <option value="BITSTAMP:ETHUSD">Ethereum</option>
-                        <option value="BITSTAMP:XRPUSD">Ripple</option>
-                        <option value="BITSTAMP:LTCUSD">Litecoin</option>
-                        <option value="BITSTAMP:ADAUSD">Cardano</option>
-                        <option value="BINANCE:SOLUSDT">Solana</option>
-                        <option value="BINANCE:DOTUSDT">Polkadot</option>
-                        <option value="BINANCE:DOGEUSDT">Dogecoin</option>
-                    </optgroup>
-                </select>
+            <div class="selectors-container">
+                <!-- Solo queda el selector de activos -->
+                <div class="selector-group">
+                    <label for="symbol-select">Activo:</label>
+                    <select id="symbol-select">
+                        <!-- Índices con SÍMBOLOS CORREGIDOS Y VERIFICADOS -->
+                        <optgroup label="Americanos">
+                            <option value="INDEX:SPX">US 500 (S&P 500)</option>
+                            <option value="DJ:DJI">US 30 (Dow Jones)</option>
+                            <option value="NASDAQ:NDX">US Tech 100 (NASDAQ)</option>
+                            <option value="INDEX:RUT">Russell 2000</option>
+                            <option value="CBOE:VIX">VIX</option>
+                        </optgroup>
+                        
+                        <optgroup label="Europeos">
+                            <option value="STOXX:50E">Europa 50 (STOXX 50)</option>
+                            <option value="XETR:DAX">Alemania 40 (DAX)</option>
+                            <option value="UKX">Reino Unido 100 (FTSE)</option>
+                            <option value="EURONEXT:PX1">Francia 40 (CAC)</option>
+                            <option value="IBEX">España 35 (IBEX)</option>
+                            <option value="FTSEMIB:FTSEMIB">Italia 40 (FTSE MIB)</option>
+                        </optgroup>
+                        
+                        <optgroup label="Asiáticos">
+                            <option value="INDEX:NKY">Japón 225 (Nikkei)</option>
+                            <option value="HSI:HSI">Hong Kong 50 (Hang Seng)</option>
+                            <option value="SSE:000001">Shanghai Composite</option>
+                            <option value="KRX:KOSPI">KOSPI</option>
+                            <option value="ASX:XJO">Australia 200 (ASX)</option>
+                        </optgroup>
+                        
+                        <optgroup label="Materias Primas">
+                            <option value="NYMEX:CL1">Petróleo WTI</option>
+                            <option value="NYMEX:BB1">Petróleo Brent</option>
+                            <option value="TVC:GOLD">Oro</option>
+                            <option value="TVC:SILVER">Plata</option>
+                            <option value="NYMEX:NG1">Gas Natural</option>
+                        </optgroup>
+                    </select>
+                </div>
             </div>
-            <button class="update-button" onclick="updateChart()">Actualizar Gráfico</button>
+            
+            <button class="update-button" onclick="updateWidget()">Actualizar</button>
         </div>
         
-        <!-- Este div es el ancla donde TradingView creará su widget -->
         <div id="tradingview-widget-container"></div>
     </div>
 
     <script>
-        /**
-         * Función GLOBAL para cambiar el símbolo del widget.
-         * Esta función será llamada desde el plugin de cTrader usando InvokeScript.
-         * @param {string} tradingViewTicker - El ticker final de TradingView (ej: "NASDAQ:NDX").
-         */
-        function setSymbol(tradingViewTicker) {
-            // Log para depuración. Puedes verlo en la consola de desarrollador (F12) dentro de la ventana del plugin.
-            console.log("Llamada a setSymbol con el ticker:", tradingViewTicker);
+        // Mapeo de símbolos de cTrader a los de TradingView
+        const cTraderToTvMap = {
+            'SPX500': 'INDEX:SPX', 'US500': 'INDEX:SPX',
+            'NAS100': 'NASDAQ:NDX', 'US100': 'NASDAQ:NDX',
+            'US30': 'DJ:DJI', 'DOW': 'DJ:DJI',
+            'GER40': 'XETR:DAX', 'DAX': 'XETR:DAX',
+            'UK100': 'UKX', 'FTSE': 'UKX',
+            'ESP35': 'IBEX', 'IBEX': 'IBEX',
+            'EU50': 'STOXX:50E', 'STXE': 'STOXX:50E'
+        };
 
-            // 1. Obtener el contenedor del widget.
-            const container = document.getElementById('tradingview-widget-container');
+        function updateWidget() {
+            // 1. Obtener solo el símbolo
+            const symbol = document.getElementById('symbol-select').value;
             
-            // 2. Limpiar el contenido anterior. Esto es CRUCIAL para recargar el widget.
+            console.log("Actualizando widget con el símbolo:", symbol);
+
+            const container = document.getElementById('tradingview-widget-container');
             container.innerHTML = '';
             
-            // 3. Crear un nuevo elemento <script> para el widget de TradingView.
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.async = true;
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
             
-            // 4. Definir la configuración del widget con el nuevo símbolo.
+            // 2. Definir la configuración del widget
             script.innerHTML = JSON.stringify({
-                "interval": "1D", // Intervalo por defecto: 1 Día
                 "width": "100%",
                 "height": "100%",
                 "isTransparent": false,
-                "symbol": tradingViewTicker, // Usamos el ticker que nos pasaron
-                "showIntervalTabs": true,
-                "displayMode": "single", // Muestra un solo activo
+                "symbol": symbol,
+                "showIntervalTabs": true, // ¡IMPORTANTE! Reactivamos las pestañas de tiempo
+                "displayMode": "single",
                 "locale": "es",
                 "colorTheme": "dark"
             });
             
-            // 5. Añadir el nuevo script al contenedor para que se cargue.
             container.appendChild(script);
         }
         
         /**
-         * Función para actualizar el gráfico con el símbolo seleccionado en el menú desplegable
+         * Función GLOBAL para que cTrader pueda cambiar el símbolo.
          */
-        function updateChart() {
-            const selectElement = document.getElementById('index-select');
-            const selectedSymbol = selectElement.value;
-            setSymbol(selectedSymbol);
+        function setSymbol(cTraderSymbolName) {
+            console.log("Llamada desde cTrader para setSymbol con:", cTraderSymbolName);
+            
+            const tvSymbol = cTraderToTvMap[cTraderSymbolName] || cTraderSymbolName;
+            
+            const symbolSelect = document.getElementById('symbol-select');
+            symbolSelect.value = tvSymbol;
+            
+            updateWidget();
         }
 
-        /**
-         * Función para inicializar el widget con un símbolo por defecto cuando la página se carga.
-         */
         function initializeWidget() {
-            // Puedes poner aquí un símbolo por defecto que te guste.
-            setSymbol('INDEX:SPX');
+            const urlParams = new URLSearchParams(window.location.search);
+            const cTraderSymbolFromUrl = urlParams.get('symbol');
+
+            if (cTraderSymbolFromUrl) {
+                setSymbol(cTraderSymbolFromUrl);
+            } else {
+                updateWidget();
+            }
         }
 
-        // Ejecuta la función de inicialización cuando la página esté completamente cargada.
         window.onload = initializeWidget;
-
     </script>
 </body>
 </html>
