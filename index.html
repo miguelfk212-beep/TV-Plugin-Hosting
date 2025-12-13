@@ -12,141 +12,80 @@
             width: 100%;
             overflow: hidden;
             background-color: #1e1e1e;
-            font-family: Arial, sans-serif;
-            color: #ffffff;
         }
         
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
-        
-        .control-panel {
-            background-color: #2a2a2a;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-            flex-wrap: wrap;
-        }
-        
-        .selectors-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .selector-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .selector-group label {
-            margin-right: 5px;
-            font-size: 12px;
-        }
-        
-        select {
-            background-color: #3a3a3a;
-            color: #ffffff;
-            border: 1px solid #555;
-            padding: 4px 8px;
-            border-radius: 4px;
-            min-width: 200px; /* Un poco más ancho al ser el único selector */
-            font-size: 12px;
-        }
-        
-        .update-button {
-            background-color: #0066cc;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 12px;
-        }
-        
-        .update-button:hover {
-            background-color: #0052a3;
-        }
-        
+        /* El contenedor ahora ocupa toda la pantalla sin necesidad de paneles */
         #tradingview-widget-container {
-            flex-grow: 1;
             width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="control-panel">
-            <div class="selectors-container">
-                <!-- Solo queda el selector de activos -->
-                <div class="selector-group">
-                    <label for="symbol-select">Activo:</label>
-                    <select id="symbol-select">
-                        <!-- Índices con SÍMBOLOS CORREGIDOS Y VERIFICADOS -->
-                        <optgroup label="Americanos">
-                            <option value="INDEX:SPX">US 500 (S&P 500)</option>
-                            <option value="DJ:DJI">US 30 (Dow Jones)</option>
-                            <option value="NASDAQ:NDX">US Tech 100 (NASDAQ)</option>
-                            <option value="INDEX:RUT">Russell 2000</option>
-                            <option value="CBOE:VIX">VIX</option>
-                        </optgroup>
-                        
-                        <optgroup label="Europeos">
-                            <option value="STOXX:50E">Europa 50 (STOXX 50)</option>
-                            <option value="XETR:DAX">Alemania 40 (DAX)</option>
-                            <option value="UKX">Reino Unido 100 (FTSE)</option>
-                            <option value="EURONEXT:PX1">Francia 40 (CAC)</option>
-                            <option value="IBEX">España 35 (IBEX)</option>
-                            <option value="FTSEMIB:FTSEMIB">Italia 40 (FTSE MIB)</option>
-                        </optgroup>
-                        
-                        <optgroup label="Asiáticos">
-                            <option value="INDEX:NKY">Japón 225 (Nikkei)</option>
-                            <option value="HSI:HSI">Hong Kong 50 (Hang Seng)</option>
-                            <option value="SSE:000001">Shanghai Composite</option>
-                            <option value="KRX:KOSPI">KOSPI</option>
-                            <option value="ASX:XJO">Australia 200 (ASX)</option>
-                        </optgroup>
-                        
-                        <optgroup label="Materias Primas">
-                            <option value="NYMEX:CL1">Petróleo WTI</option>
-                            <option value="NYMEX:BB1">Petróleo Brent</option>
-                            <option value="TVC:GOLD">Oro</option>
-                            <option value="TVC:SILVER">Plata</option>
-                            <option value="NYMEX:NG1">Gas Natural</option>
-                        </optgroup>
-                    </select>
-                </div>
-            </div>
-            
-            <button class="update-button" onclick="updateWidget()">Actualizar</button>
-        </div>
-        
-        <div id="tradingview-widget-container"></div>
-    </div>
+    <!-- Este div es el ancla donde TradingView creará su widget -->
+    <div id="tradingview-widget-container"></div>
 
     <script>
-        // Mapeo de símbolos de cTrader a los de TradingView
+        // Mapeo de símbolos de cTrader a los de TradingView (¡EXPANDIDO CON FOREX!)
         const cTraderToTvMap = {
+            // Índices
             'SPX500': 'INDEX:SPX', 'US500': 'INDEX:SPX',
             'NAS100': 'NASDAQ:NDX', 'US100': 'NASDAQ:NDX',
             'US30': 'DJ:DJI', 'DOW': 'DJ:DJI',
             'GER40': 'XETR:DAX', 'DAX': 'XETR:DAX',
             'UK100': 'UKX', 'FTSE': 'UKX',
             'ESP35': 'IBEX', 'IBEX': 'IBEX',
-            'EU50': 'STOXX:50E', 'STXE': 'STOXX:50E'
+            'EU50': 'STOXX:50E', 'STXE': 'STOXX:50E',
+            
+            // Materias Primas
+            'GOLD': 'TVC:GOLD', 'XAUUSD': 'TVC:GOLD',
+            'SILVER': 'TVC:SILVER', 'XAGUSD': 'TVC:SILVER',
+            'OIL': 'NYMEX:CL1', 'WTI': 'NYMEX:CL1',
+            'BRENT': 'NYMEX:BB1', 'UKOIL': 'NYMEX:BB1',
+            'NATGAS': 'NYMEX:NG1', 'GAS': 'NYMEX:NG1',
+
+            // Forex - Pares Principales y Secundarios
+            'EURUSD': 'FX:EURUSD',
+            'GBPUSD': 'FX:GBPUSD',
+            'AUDUSD': 'FX:AUDUSD',
+            'NZDUSD': 'FX:NZDUSD',
+            'USDJPY': 'FX:USDJPY',
+            'USDCHF': 'FX:USDCHF',
+            'USDCAD': 'FX:USDCAD',
+            
+            // Pares Cruzados (Crosses)
+            'EURGBP': 'FX:EURGBP',
+            'EURJPY': 'FX:EURJPY',
+            'EURCHF': 'FX:EURCHF',
+            'EURAUD': 'FX:EURAUD',
+            'EURNZD': 'FX:EURNZD',
+            'EURCAD': 'FX:EURCAD',
+            
+            'GBPJPY': 'FX:GBPJPY',
+            'GBPCHF': 'FX:GBPCHF',
+            'GBPAUD': 'FX:GBPAUD',
+            'GBPNZD': 'FX:GBPNZD',
+            'GBPCAD': 'FX:GBPCAD',
+            
+            'AUDJPY': 'FX:AUDJPY',
+            'AUDCHF': 'FX:AUDCHF',
+            'AUDNZD': 'FX:AUDNZD',
+            'AUDCAD': 'FX:AUDCAD',
+            
+            'NZDJPY': 'FX:NZDJPY',
+            'NZDCHF': 'FX:NZDCHF',
+            'NZDCAD': 'FX:NZDCAD',
+            
+            'CADJPY': 'FX:CADJPY',
+            'CADCHF': 'FX:CADCHF',
+            'CHFJPY': 'FX:CHFJPY'
         };
 
-        function updateWidget() {
-            // 1. Obtener solo el símbolo
-            const symbol = document.getElementById('symbol-select').value;
-            
+        /**
+         * Función principal para actualizar el widget.
+         * @param {string} symbol - El símbolo de TradingView a mostrar.
+         */
+        function updateWidget(symbol) {
             console.log("Actualizando widget con el símbolo:", symbol);
 
             const container = document.getElementById('tradingview-widget-container');
@@ -157,13 +96,12 @@
             script.async = true;
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
             
-            // 2. Definir la configuración del widget
             script.innerHTML = JSON.stringify({
                 "width": "100%",
                 "height": "100%",
                 "isTransparent": false,
                 "symbol": symbol,
-                "showIntervalTabs": true, // ¡IMPORTANTE! Reactivamos las pestañas de tiempo
+                "showIntervalTabs": true, // Pestañas de tiempo activadas
                 "displayMode": "single",
                 "locale": "es",
                 "colorTheme": "dark"
@@ -174,29 +112,36 @@
         
         /**
          * Función GLOBAL para que cTrader pueda cambiar el símbolo.
+         * Esta es la función que tu plugin de cTrader llamará.
          */
         function setSymbol(cTraderSymbolName) {
             console.log("Llamada desde cTrader para setSymbol con:", cTraderSymbolName);
             
+            // Mapea el símbolo de cTrader al de TradingView
             const tvSymbol = cTraderToTvMap[cTraderSymbolName] || cTraderSymbolName;
             
-            const symbolSelect = document.getElementById('symbol-select');
-            symbolSelect.value = tvSymbol;
-            
-            updateWidget();
+            // Actualiza el widget con el nuevo símbolo
+            updateWidget(tvSymbol);
         }
 
+        /**
+         * Función para inicializar el widget al cargar la página.
+         */
         function initializeWidget() {
+            // Lee el símbolo de la URL (ej: ?symbol=EURUSD)
             const urlParams = new URLSearchParams(window.location.search);
             const cTraderSymbolFromUrl = urlParams.get('symbol');
 
             if (cTraderSymbolFromUrl) {
+                // Si hay un símbolo en la URL, úsalo
                 setSymbol(cTraderSymbolFromUrl);
             } else {
-                updateWidget();
+                // Si no, carga un símbolo por defecto
+                updateWidget('INDEX:SPX');
             }
         }
 
+        // Ejecuta la función de inicialización cuando la página esté completamente cargada.
         window.onload = initializeWidget;
     </script>
 </body>
