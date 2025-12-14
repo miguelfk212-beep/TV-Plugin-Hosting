@@ -14,13 +14,12 @@
             background-color: #1e1e1e;
         }
         
-        /* --- ESTE ES EL SECRETO --- */
-        /* El contenedor ocupa toda la ventana de cTrader, pero hacemos zoom para que quepa todo */
+        /* --- APLICANDO MÁS ZOOM OUT --- */
         #tradingview-heatmap-container {
             width: 100%;
             height: 100%;
-            zoom: 0.8; /* Hacemos "zoom out" al 80% para que toda la cuadrícula quepa */
-            transform-origin: 0 0; /* Asegura que el zoom sea desde la esquina superior izquierda */
+            zoom: 0.7; /* Reducido al 70% para más zoom out */
+            transform-origin: 0 0;
         }
 
     </style>
@@ -31,7 +30,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor para que quepa todo sin scroll...");
+            console.log("Inicializando Mapa de Calor con más zoom out...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
