@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Calor Forex - Prueba</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #1e1e1e;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* Panel de control superior */
+        .control-panel {
+            background-color: #2a2a2a;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centramos el selector */
+            border-bottom: 1px solid #444;
+        }
+        
+        .selector-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .selector-group label {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+        
+        select {
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        /* El contenedor del mapa de calor, con un tamaño por defecto */
+        #tradingview-heatmap-container {
+            width: 650px;  <!-- Tamaño MEDIANO por defecto -->
+            height: 500px;
+            margin: 20px auto; /* Centrar el widget en la ventana */
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="control-panel">
+            <div class="selector-group">
+                <label for="size-select">Tamaño del Mapa:</label>
+                <select id="size-select" onchange="updateHeatmap()">
+                    <option value="small">Pequeño</option>
+                    <option value="medium" selected>Mediano</option>
+                    <option value="large">Grande (Pantalla Completa)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="tradingview-heatmap-container"></div>
+    </div>
+
+    <script>
+        function updateHeatmap() {
+            const selectedSize = document.getElementById('size-select').value;
+            const container = document.getElementById('tradingview-heatmap-container');
+            
+            console.log("Cambiando tamaño a:", selectedSize);
+
+            // Ajustar el tamaño del contenedor según la selección
+            switch (selectedSize) {
+                case 'small':
+                    container.style.width = '500px';
+                    container.style.height = '400px';
+                    container.style.margin = '20px auto';
+                    break;
+                case 'medium':
+                    container.style.width = '650px';
+                    container.style.height = '500px';
+                    container.style.margin = '20px auto';
+                    break;
+                case 'large':
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+                    container.style.margin = '0'; // Quitar margen para pantalla completa
+                    break;
+            }
+            
+            // Limpiar y recargar el widget para que se adapte al nuevo tamaño
+            container.innerHTML = '';
+            
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js';
+            
+            script.innerHTML = JSON.stringify({
+                "width": container.style.width,
+                "height": container.style.height,
+                "currencies": [
+                    "EUR", "USD", "JPY", "GBP", "AUD", "CAD", "CHF", "NZD"
+                ],
+                "colorTheme": "dark",
+                "locale": "es"
+            });
+            
+            container.appendChild(script);
+        }
+
+        // Inicializar el mapa con el tamaño por defecto (mediano) al cargar la página
+        window.onload = updateHeatmap;
+    </script>
+</body>
+</html>
