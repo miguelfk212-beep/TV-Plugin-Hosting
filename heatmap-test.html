@@ -8,14 +8,13 @@
         body, html {
             margin: 0;
             padding: 0;
-            /* El body ahora tendrá un tamaño fijo, no el 100% */
-            width: 800px;  <!-- Puedes ajustar este valor -->
-            height: 600px; <!-- Puedes ajustar este valor -->
-            overflow: hidden; /* Evita que aparezcan barras de scroll */
+            /* --- CAMBIO 1: Tamaño más pequeño --- */
+            width: 650px;  <!-- Antes era 800px -->
+            height: 500px; <!-- Antes era 600px -->
+            overflow: hidden;
             background-color: #1e1e1e;
         }
         
-        /* El contenedor ahora ocupa el tamaño del body */
         #tradingview-heatmap-container {
             width: 100%;
             height: 100%;
@@ -29,7 +28,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con tamaño fijo...");
+            console.log("Inicializando Mapa de Calor con tamaño más pequeño...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
@@ -38,11 +37,10 @@
             script.async = true;
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js';
             
-            // --- ESTE ES EL CAMBIO CLAVE ---
-            // Le damos un tamaño FIJO al widget en píxeles, no en porcentajes
             script.innerHTML = JSON.stringify({
-                "width": 800,   <!-- Ancho FIJO en píxeles -->
-                "height": 600,  <!-- Alto FIJO en píxeles -->
+                /* --- CAMBIO 2: Tamaño más pequeño --- */
+                "width": 650,   <!-- Antes era 800 -->
+                "height": 500,  <!-- Antes era 600 -->
                 "currencies": [
                     "EUR", "USD", "JPY", "GBP", "AUD", "CAD", "CHF", "NZD"
                 ],
