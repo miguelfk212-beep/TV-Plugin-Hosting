@@ -19,22 +19,28 @@
             height: 100%;
         }
 
-        /* --- ESTILOS PERSONALIZADOS CON ICONOS MÁS PEQUEÑOS --- */
-        #tradingview-heatmap-container img {
-            transform: scale(0.65) !important; /* Reducido al 65% (más pequeño que antes) */
-            transform-origin: center !important;
+        /* --- ESTILOS PERSONALIZADOS PARA HACER LAS CELDAS MÁS PEQUEÑAS --- */
+        #tradingview-heatmap-container table {
+            border-collapse: collapse !important; /* Elimina el espacio entre los bordes de las celdas */
+        }
+
+        #tradingview-heatmap-container td {
+            padding: 1px !important; /* Reduce el espaciado interno al mínimo */
+            border-spacing: 0px !important;
         }
 
         #tradingview-heatmap-container .currency-symbol {
-            font-size: 14px !important;
+            font-size: 12px !important; /* Texto de la divisa más pequeño */
         }
 
         #tradingview-heatmap-container .value-text {
-            font-size: 11px !important;
+            font-size: 10px !important; /* Texto del porcentaje mucho más pequeño */
         }
         
-        #tradingview-heatmap-container td {
-            padding: 2px !important;
+        /* Reducimos un poco más los iconos para que no desentonen */
+        #tradingview-heatmap-container img {
+            transform: scale(0.6) !important;
+            transform-origin: center !important;
         }
 
     </style>
@@ -45,7 +51,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con iconos más pequeños...");
+            console.log("Inicializando Mapa de Calor con celdas compactas...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
