@@ -8,16 +8,19 @@
         body, html {
             margin: 0;
             padding: 0;
-            /* --- CAMBIO 1: Tamaño extra pequeño --- */
-            width: 550px;  <!-- Antes era 650px -->
-            height: 420px; <!-- Antes era 500px -->
-            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* ¡MUY IMPORTANTE! Evita el scroll en la página */
             background-color: #1e1e1e;
         }
         
+        /* --- ESTE ES EL SECRETO --- */
+        /* El contenedor ocupa toda la ventana de cTrader, pero hacemos zoom para que quepa todo */
         #tradingview-heatmap-container {
             width: 100%;
             height: 100%;
+            zoom: 0.8; /* Hacemos "zoom out" al 80% para que toda la cuadrícula quepa */
+            transform-origin: 0 0; /* Asegura que el zoom sea desde la esquina superior izquierda */
         }
 
     </style>
@@ -28,7 +31,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con tamaño extra pequeño...");
+            console.log("Inicializando Mapa de Calor para que quepa todo sin scroll...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
@@ -38,9 +41,8 @@
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js';
             
             script.innerHTML = JSON.stringify({
-                /* --- CAMBIO 2: Tamaño extra pequeño --- */
-                "width": 550,   <!-- Antes era 650 -->
-                "height": 420,  <!-- Antes era 500 -->
+                "width": "100%",
+                "height": "100%",
                 "currencies": [
                     "EUR", "USD", "JPY", "GBP", "AUD", "CAD", "CHF", "NZD"
                 ],
