@@ -14,11 +14,12 @@
             background-color: #1e1e1e;
         }
         
-        /* --- VOLVIENDO AL MÉTODO ANTERIOR CON MÁS ZOOM --- */
+        /* --- APLICANDO ZOOM OUT MÁXIMO --- */
         #tradingview-heatmap-container {
             width: 100%;
             height: 100%;
-            zoom: 0.4; /* Zoom out al 40% como pediste */
+            zoom: 0.6; /* Reducido al 60% para un zoom out más agresivo */
+            transform-origin: 0 0;
         }
 
     </style>
@@ -29,7 +30,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con zoom al 40%...");
+            console.log("Inicializando Mapa de Calor con zoom out máximo...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
