@@ -14,14 +14,11 @@
             background-color: #1e1e1e;
         }
         
-        /* --- ESTE ES EL SECRETO QUE SÍ FUNCIONA EN CTRADER --- */
+        /* --- VOLVIENDO AL MÉTODO ANTERIOR CON MÁS ZOOM --- */
         #tradingview-heatmap-container {
             width: 100%;
             height: 100%;
-            /* Reemplazamos 'zoom' por 'transform: scale' */
-            transform: scale(0.55); /* Hacemos zoom out al 55% */
-            /* Aseguramos que el zoom sea desde la esquina superior izquierda */
-            transform-origin: 0 0;
+            zoom: 0.4; /* Zoom out al 40% como pediste */
         }
 
     </style>
@@ -32,7 +29,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con transform: scale...");
+            console.log("Inicializando Mapa de Calor con zoom al 40%...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
