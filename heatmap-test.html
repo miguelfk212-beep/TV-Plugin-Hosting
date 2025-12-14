@@ -12,35 +12,26 @@
             width: 100%;
             overflow: hidden;
             background-color: #1e1e1e;
+            /* Usamos Flexbox para centrar el contenido vertical y horizontalmente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
+        /* --- ESTE ES EL CAMBIO CLAVE --- */
+        /* El contenedor ahora tendrá un tamaño fijo y más pequeño que la ventana */
         #tradingview-heatmap-container {
-            width: 100%;
-            height: 100%;
+            width: 80%;  /* Ocupa el 80% del ancho de la ventana */
+            height: 80%; /* Ocupa el 80% del alto de la ventana */
         }
 
-        /* --- ESTILOS PERSONALIZADOS PARA HACER LAS CELDAS MÁS PEQUEÑAS --- */
-        #tradingview-heatmap-container table {
-            border-collapse: collapse !important; /* Elimina el espacio entre los bordes de las celdas */
-        }
-
-        #tradingview-heatmap-container td {
-            padding: 1px !important; /* Reduce el espaciado interno al mínimo */
-            border-spacing: 0px !important;
-        }
-
+        /* Mantenemos los textos pequeños para que se vean bien en la cuadrícula reducida */
         #tradingview-heatmap-container .currency-symbol {
-            font-size: 12px !important; /* Texto de la divisa más pequeño */
+            font-size: 12px !important;
         }
 
         #tradingview-heatmap-container .value-text {
-            font-size: 10px !important; /* Texto del porcentaje mucho más pequeño */
-        }
-        
-        /* Reducimos un poco más los iconos para que no desentonen */
-        #tradingview-heatmap-container img {
-            transform: scale(0.6) !important;
-            transform-origin: center !important;
+            font-size: 10px !important;
         }
 
     </style>
@@ -51,7 +42,7 @@
 
     <script>
         function initializeHeatmap() {
-            console.log("Inicializando Mapa de Calor con celdas compactas...");
+            console.log("Inicializando Mapa de Calor con cuadrícula reducida...");
 
             const container = document.getElementById('tradingview-heatmap-container');
             
