@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widget de TradingView para cTrader</title>
+    <title>Technical Analysis - TradingView</title>
     <style>
         body, html {
             margin: 0;
@@ -14,7 +14,6 @@
             background-color: #1e1e1e;
         }
         
-        /* El contenedor ahora ocupa toda la pantalla sin necesidad de paneles */
         #tradingview-widget-container {
             width: 100%;
             height: 100%;
@@ -22,72 +21,36 @@
     </style>
 </head>
 <body>
-    <!-- Este div es el ancla donde TradingView creará su widget -->
+
     <div id="tradingview-widget-container"></div>
 
     <script>
-        // Mapeo de símbolos de cTrader a los de TradingView (¡EXPANDIDO CON FOREX!)
+        // Simplified symbol map, including only Forex and Gold to avoid errors.
         const cTraderToTvMap = {
-            // Índices
-            'SPX500': 'INDEX:SPX', 'US500': 'INDEX:SPX',
-            'NAS100': 'NASDAQ:NDX', 'US100': 'NASDAQ:NDX',
-            'US30': 'DJ:DJI', 'DOW': 'DJ:DJI',
-            'GER40': 'XETR:DAX', 'DAX': 'XETR:DAX',
-            'UK100': 'UKX', 'FTSE': 'UKX',
-            'ESP35': 'IBEX', 'IBEX': 'IBEX',
-            'EU50': 'STOXX:50E', 'STXE': 'STOXX:50E',
-            
-            // Materias Primas
-            'GOLD': 'TVC:GOLD', 'XAUUSD': 'TVC:GOLD',
-            'SILVER': 'TVC:SILVER', 'XAGUSD': 'TVC:SILVER',
-            'OIL': 'NYMEX:CL1', 'WTI': 'NYMEX:CL1',
-            'BRENT': 'NYMEX:BB1', 'UKOIL': 'NYMEX:BB1',
-            'NATGAS': 'NYMEX:NG1', 'GAS': 'NYMEX:NG1',
-
-            // Forex - Pares Principales y Secundarios
-            'EURUSD': 'FX:EURUSD',
-            'GBPUSD': 'FX:GBPUSD',
-            'AUDUSD': 'FX:AUDUSD',
-            'NZDUSD': 'FX:NZDUSD',
-            'USDJPY': 'FX:USDJPY',
-            'USDCHF': 'FX:USDCHF',
-            'USDCAD': 'FX:USDCAD',
-            
-            // Pares Cruzados (Crosses)
-            'EURGBP': 'FX:EURGBP',
-            'EURJPY': 'FX:EURJPY',
-            'EURCHF': 'FX:EURCHF',
-            'EURAUD': 'FX:EURAUD',
-            'EURNZD': 'FX:EURNZD',
-            'EURCAD': 'FX:EURCAD',
-            
-            'GBPJPY': 'FX:GBPJPY',
-            'GBPCHF': 'FX:GBPCHF',
-            'GBPAUD': 'FX:GBPAUD',
-            'GBPNZD': 'FX:GBPNZD',
-            'GBPCAD': 'FX:GBPCAD',
-            
-            'AUDJPY': 'FX:AUDJPY',
-            'AUDCHF': 'FX:AUDCHF',
-            'AUDNZD': 'FX:AUDNZD',
-            'AUDCAD': 'FX:AUDCAD',
-            
-            'NZDJPY': 'FX:NZDJPY',
-            'NZDCHF': 'FX:NZDCHF',
-            'NZDCAD': 'FX:NZDCAD',
-            
-            'CADJPY': 'FX:CADJPY',
-            'CADCHF': 'FX:CADCHF',
-            'CHFJPY': 'FX:CHFJPY'
+            // Forex
+            'EURUSD': 'FX:EURUSD', 'GBPUSD': 'FX:GBPUSD', 'AUDUSD': 'FX:AUDUSD', 'NZDUSD': 'FX:NZDUSD',
+            'USDJPY': 'FX:USDJPY', 'USDCHF': 'FX:USDCHF', 'USDCAD': 'FX:USDCAD',
+            'EURGBP': 'FX:EURGBP', 'EURJPY': 'FX:EURJPY', 'EURCHF': 'FX:EURCHF',
+            'EURAUD': 'FX:EURAUD', 'EURNZD': 'FX:EURNZD', 'EURCAD': 'FX:EURCAD',
+            'GBPJPY': 'FX:GBPJPY', 'GBPCHF': 'FX:GBPCHF', 'GBPAUD': 'FX:GBPAUD',
+            'GBPNZD': 'FX:GBPNZD', 'GBPCAD': 'FX:GBPCAD', 'AUDJPY': 'FX:AUDJPY',
+            'AUDCHF': 'FX:AUDCHF', 'AUDNZD': 'FX:AUDNZD', 'AUDCAD': 'FX:AUDCAD',
+            'NZDJPY': 'FX:NZDJPY', 'NZDCHF': 'FX:NZDCHF', 'NZDCAD': 'FX:NZDCAD',
+            'CADJPY': 'FX:CADJPY', 'CADCHF': 'FX:CADCHF', 'CHFJPY': 'FX:CHFJPY',
+            // Gold
+            'GOLD': 'TVC:GOLD', 'XAUUSD': 'TVC:GOLD'
         };
 
         /**
-         * Función principal para actualizar el widget.
-         * @param {string} symbol - El símbolo de TradingView a mostrar.
+         * Global function to update the widget. This is called by cTrader.
+         * @param {string} cTraderSymbolName - The symbol from cTrader (e.g., "EURUSD").
          */
-        function updateWidget(symbol) {
-            console.log("Actualizando widget con el símbolo:", symbol);
-
+        function setSymbol(cTraderSymbolName) {
+            console.log("Updating symbol to:", cTraderSymbolName);
+            
+            // Map the cTrader symbol to the TradingView symbol
+            const tvSymbol = cTraderToTvMap[cTraderSymbolName] || cTraderSymbolName;
+            
             const container = document.getElementById('tradingview-widget-container');
             container.innerHTML = '';
             
@@ -100,49 +63,15 @@
                 "width": "100%",
                 "height": "100%",
                 "isTransparent": false,
-                "symbol": symbol,
-                "showIntervalTabs": true, // Pestañas de tiempo activadas
+                "symbol": tvSymbol,
+                "showIntervalTabs": true,
                 "displayMode": "single",
-                "locale": "es",
+                "locale": "en", // Changed to English as required
                 "colorTheme": "dark"
             });
             
             container.appendChild(script);
         }
-        
-        /**
-         * Función GLOBAL para que cTrader pueda cambiar el símbolo.
-         * Esta es la función que tu plugin de cTrader llamará.
-         */
-        function setSymbol(cTraderSymbolName) {
-            console.log("Llamada desde cTrader para setSymbol con:", cTraderSymbolName);
-            
-            // Mapea el símbolo de cTrader al de TradingView
-            const tvSymbol = cTraderToTvMap[cTraderSymbolName] || cTraderSymbolName;
-            
-            // Actualiza el widget con el nuevo símbolo
-            updateWidget(tvSymbol);
-        }
-
-        /**
-         * Función para inicializar el widget al cargar la página.
-         */
-        function initializeWidget() {
-            // Lee el símbolo de la URL (ej: ?symbol=EURUSD)
-            const urlParams = new URLSearchParams(window.location.search);
-            const cTraderSymbolFromUrl = urlParams.get('symbol');
-
-            if (cTraderSymbolFromUrl) {
-                // Si hay un símbolo en la URL, úsalo
-                setSymbol(cTraderSymbolFromUrl);
-            } else {
-                // Si no, carga un símbolo por defecto
-                updateWidget('INDEX:SPX');
-            }
-        }
-
-        // Ejecuta la función de inicialización cuando la página esté completamente cargada.
-        window.onload = initializeWidget;
     </script>
 </body>
 </html>
