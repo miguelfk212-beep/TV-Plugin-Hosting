@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Technical Analysis - TradingView</title>
     <style>
         body, html {
@@ -12,66 +14,213 @@
             width: 100%;
             overflow: hidden;
             background-color: #1e1e1e;
+            -webkit-overflow-scrolling: touch;
         }
         
         #tradingview-widget-container {
             width: 100%;
             height: 100%;
+            position: relative;
+        }
+        
+        #loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-size: 16px;
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        #error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff6b6b;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            max-width: 80%;
+            display: none;
+            z-index: 1001;
         }
     </style>
 </head>
 <body>
-
+    <div id="loading-message">Loading TradingView widget...<br><span id="current-symbol">EURUSD</span></div>
+    <div id="error-message"></div>
     <div id="tradingview-widget-container"></div>
-
+    
     <script>
-        // Simplified symbol map, including only Forex and Gold to avoid errors.
+        // Forex pairs and Gold only
         const cTraderToTvMap = {
-            // Forex
-            'EURUSD': 'FX:EURUSD', 'GBPUSD': 'FX:GBPUSD', 'AUDUSD': 'FX:AUDUSD', 'NZDUSD': 'FX:NZDUSD',
-            'USDJPY': 'FX:USDJPY', 'USDCHF': 'FX:USDCHF', 'USDCAD': 'FX:USDCAD',
-            'EURGBP': 'FX:EURGBP', 'EURJPY': 'FX:EURJPY', 'EURCHF': 'FX:EURCHF',
-            'EURAUD': 'FX:EURAUD', 'EURNZD': 'FX:EURNZD', 'EURCAD': 'FX:EURCAD',
-            'GBPJPY': 'FX:GBPJPY', 'GBPCHF': 'FX:GBPCHF', 'GBPAUD': 'FX:GBPAUD',
-            'GBPNZD': 'FX:GBPNZD', 'GBPCAD': 'FX:GBPCAD', 'AUDJPY': 'FX:AUDJPY',
-            'AUDCHF': 'FX:AUDCHF', 'AUDNZD': 'FX:AUDNZD', 'AUDCAD': 'FX:AUDCAD',
-            'NZDJPY': 'FX:NZDJPY', 'NZDCHF': 'FX:NZDCHF', 'NZDCAD': 'FX:NZDCAD',
-            'CADJPY': 'FX:CADJPY', 'CADCHF': 'FX:CADCHF', 'CHFJPY': 'FX:CHFJPY',
+            // Forex - Major Pairs
+            'EURUSD': 'FX:EURUSD',
+            'GBPUSD': 'FX:GBPUSD',
+            'AUDUSD': 'FX:AUDUSD',
+            'NZDUSD': 'FX:NZDUSD',
+            'USDJPY': 'FX:USDJPY',
+            'USDCHF': 'FX:USDCHF',
+            'USDCAD': 'FX:USDCAD',
+            
+            // Forex - Cross Pairs
+            'EURGBP': 'FX:EURGBP',
+            'EURJPY': 'FX:EURJPY',
+            'EURCHF': 'FX:EURCHF',
+            'EURAUD': 'FX:EURAUD',
+            'EURNZD': 'FX:EURNZD',
+            'EURCAD': 'FX:EURCAD',
+            'GBPJPY': 'FX:GBPJPY',
+            'GBPCHF': 'FX:GBPCHF',
+            'GBPAUD': 'FX:GBPAUD',
+            'GBPNZD': 'FX:GBPNZD',
+            'GBPCAD': 'FX:GBPCAD',
+            'AUDJPY': 'FX:AUDJPY',
+            'AUDCHF': 'FX:AUDCHF',
+            'AUDNZD': 'FX:AUDNZD',
+            'AUDCAD': 'FX:AUDCAD',
+            'NZDJPY': 'FX:NZDJPY',
+            'NZDCHF': 'FX:NZDCHF',
+            'NZDCAD': 'FX:NZDCAD',
+            'CADJPY': 'FX:CADJPY',
+            'CADCHF': 'FX:CADCHF',
+            'CHFJPY': 'FX:CHFJPY',
+            
             // Gold
-            'GOLD': 'TVC:GOLD', 'XAUUSD': 'TVC:GOLD'
+            'GOLD': 'TVC:GOLD',
+            'XAUUSD': 'TVC:GOLD'
         };
-
+        
         /**
-         * Global function to update the widget. This is called by cTrader.
-         * @param {string} cTraderSymbolName - The symbol from cTrader (e.g., "EURUSD").
+         * Shows an error message to the user
+         */
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            const loadingDiv = document.getElementById('loading-message');
+            
+            if (errorDiv && loadingDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                loadingDiv.style.display = 'none';
+            }
+            
+            console.error('Plugin Error:', message);
+        }
+        
+        /**
+         * Main function to update the widget with a new symbol
+         * This function is called by cTrader when the user changes symbols
+         * @param {string} cTraderSymbolName - Symbol name from cTrader (e.g., "EURUSD", "US30")
          */
         function setSymbol(cTraderSymbolName) {
-            console.log("Updating symbol to:", cTraderSymbolName);
+            console.log('setSymbol called with:', cTraderSymbolName);
             
-            // Map the cTrader symbol to the TradingView symbol
-            const tvSymbol = cTraderToTvMap[cTraderSymbolName] || cTraderSymbolName;
+            // Validate input
+            if (!cTraderSymbolName || typeof cTraderSymbolName !== 'string') {
+                showError('Invalid symbol provided');
+                return;
+            }
             
+            // Update loading message
+            const symbolDisplay = document.getElementById('current-symbol');
+            if (symbolDisplay) {
+                symbolDisplay.textContent = cTraderSymbolName;
+            }
+            
+            // Normalize symbol name (remove spaces, convert to uppercase)
+            const normalizedSymbol = cTraderSymbolName.trim().toUpperCase().replace(/\s+/g, '');
+            
+            // Map cTrader symbol to TradingView symbol
+            const tvSymbol = cTraderToTvMap[normalizedSymbol];
+            
+            if (!tvSymbol) {
+                showError('Symbol "' + cTraderSymbolName + '" is not supported. Please check the product description for compatible symbols.');
+                return;
+            }
+            
+            console.log('Mapped to TradingView symbol:', tvSymbol);
+            
+            // Clear previous widget
             const container = document.getElementById('tradingview-widget-container');
+            if (!container) {
+                showError('Widget container not found');
+                return;
+            }
+            
             container.innerHTML = '';
             
+            // Hide error message if visible
+            const errorDiv = document.getElementById('error-message');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            
+            // Create and configure the TradingView widget script
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.async = true;
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
             
-            script.innerHTML = JSON.stringify({
+            // Widget configuration
+            const widgetConfig = {
                 "width": "100%",
                 "height": "100%",
                 "isTransparent": false,
                 "symbol": tvSymbol,
                 "showIntervalTabs": true,
                 "displayMode": "single",
-                "locale": "en", // Changed to English as required
+                "locale": "en",
                 "colorTheme": "dark"
-            });
+            };
+            
+            script.innerHTML = JSON.stringify(widgetConfig);
+            
+            // Error handling for script loading
+            script.onerror = function() {
+                showError('Failed to load TradingView widget. Please check your internet connection.');
+            };
             
             container.appendChild(script);
+            
+            // Hide loading message after delay
+            setTimeout(function() {
+                const loadingMsg = document.getElementById('loading-message');
+                if (loadingMsg) {
+                    loadingMsg.style.display = 'none';
+                }
+            }, 2000);
         }
+        
+        /**
+         * Initialize the widget when the page loads
+         */
+        function initializeWidget() {
+            console.log('Initializing widget...');
+            
+            // Check for symbol in URL parameters (for testing)
+            const urlParams = new URLSearchParams(window.location.search);
+            const symbolFromUrl = urlParams.get('symbol');
+            
+            if (symbolFromUrl) {
+                console.log('Symbol from URL:', symbolFromUrl);
+                setSymbol(symbolFromUrl);
+            } else {
+                // Default symbol
+                console.log('Loading default symbol: EURUSD');
+                setSymbol('EURUSD');
+            }
+        }
+        
+        // Initialize when page is fully loaded
+        window.onload = initializeWidget;
+        
+        // Expose setSymbol globally for cTrader to call
+        window.setSymbol = setSymbol;
     </script>
 </body>
 </html>
