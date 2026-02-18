@@ -1,675 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Finance Live — Markets Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Live Viewer for Traders</title>
   <style>
-    :root {
-      --green:  #00c853;
-      --red:    #e8192c;
-      --dark:   #080b0f;
-      --panel:  #0f1318;
-      --card:   #13181f;
-      --border: #1e252f;
-      --text:   #e8edf2;
-      --muted:  #4a5568;
-      --accent: #00c853;
-    }
-
+    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      background: var(--dark);
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #161a23;
+      --border:    #252c3a;
+      --accent:    #3b82f6;
+      --accent-h:  #2563eb;
+      --danger:    #ef4444;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --radius:    8px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
       color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif;
-      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* ── Layout wrapper ── */
+    .wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    /* HEADER */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 28px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-      position: sticky;
-      top: 0;
-      z-index: 200;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: var(--green);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Bebas Neue', cursive;
-      font-size: 18px;
-      color: #000;
-      clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
-    }
-
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
-
-    .logo-main {
-      font-family: 'Bebas Neue', cursive;
-      font-size: 22px;
-      letter-spacing: 4px;
-      color: var(--text);
-    }
-
-    .logo-sub {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(0,200,83,0.1);
-      border: 1px solid rgba(0,200,83,0.3);
-      padding: 5px 12px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: var(--green);
-      text-transform: uppercase;
-    }
-
-    .live-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-
-    .market-time {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 1px;
-    }
-
-    /* TICKER */
-    .ticker-wrap {
-      background: linear-gradient(90deg, #001a0d 0%, #0a1f10 100%);
-      border-bottom: 1px solid rgba(0,200,83,0.2);
-      padding: 6px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .ticker-track {
-      display: inline-flex;
-      gap: 60px;
-      animation: ticker 35s linear infinite;
-    }
-
-    .ticker-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
-
-    .ticker-symbol { color: var(--green); font-weight: 600; }
-    .ticker-up   { color: #00c853; }
-    .ticker-down { color: var(--red); }
-    .ticker-sep  { color: var(--muted); }
-
-    /* CHANNEL TABS */
-    .tabs-wrap {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      display: flex;
-      gap: 4px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs-wrap::-webkit-scrollbar { display: none; }
-
-    .tab {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 18px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      background: none;
-      border-top: none;
-      border-left: none;
-      border-right: none;
-      color: var(--muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    .tab:hover {
-      color: var(--text);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .tab.active {
-      color: var(--green);
-      border-bottom-color: var(--green);
-      background: rgba(0,200,83,0.05);
-    }
-
-    .tab-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: 0.6;
-    }
-
-    .tab.active .tab-dot { animation: pulse 1.4s ease-in-out infinite; opacity: 1; }
-
-    /* MAIN LAYOUT */
-    .main-layout {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 20px 28px 32px;
       gap: 16px;
+      min-height: 100%;
     }
 
-    /* NOW PLAYING BAR */
-    .now-playing {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--green);
-      padding: 10px 16px;
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding: 12px 0 4px;
     }
-
-    .np-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .np-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--green);
-    }
-
-    .np-name {
-      font-family: 'Bebas Neue', cursive;
-      font-size: 20px;
-      letter-spacing: 3px;
+    header h1 {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
       color: var(--text);
     }
-
-    .np-desc {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
+    header h1 span {
+      color: var(--accent);
+    }
+    header p {
+      margin-top: 4px;
+      font-size: 0.82rem;
       color: var(--muted);
-      letter-spacing: 1px;
     }
 
-    /* VIDEO AREA */
-    .video-area {
-      width: 100%;
-      background: #000;
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
       border: 1px solid var(--border);
-      position: relative;
+      border-radius: var(--radius);
+      padding: 16px;
     }
 
-    .video-wrapper {
+    /* ── Input row ── */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .input-row input {
+      flex: 1 1 200px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-row input:focus {
+      border-color: var(--accent);
+    }
+    .input-row input::placeholder {
+      color: var(--muted);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-h); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+    /* ── Error message ── */
+    #error-msg {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--danger);
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius);
+    }
+
+    /* ── Video container — responsive 16:9 ── */
+    #player-wrap {
+      display: none; /* shown after first load */
+    }
+    .aspect-box {
       position: relative;
       width: 100%;
-      padding-top: 56.25%;
+      padding-top: 56.25%; /* 9/16 = 56.25% */
+      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
     }
-
-    .video-wrapper iframe {
+    .aspect-box iframe {
       position: absolute;
       inset: 0;
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       border: none;
-      display: block;
     }
 
-    /* CHANNEL GRID (quick select) */
-    .section-title {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .channel-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
-    }
-
-    .ch-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 14px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ch-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: var(--green);
-      transform: scaleY(0);
-      transition: transform 0.2s ease;
-    }
-
-    .ch-card:hover { border-color: rgba(0,200,83,0.3); background: #161d26; }
-    .ch-card:hover::before { transform: scaleY(1); }
-    .ch-card.active { border-color: var(--green); background: rgba(0,200,83,0.07); }
-    .ch-card.active::before { transform: scaleY(1); }
-
-    .ch-name {
-      font-family: 'Bebas Neue', cursive;
-      font-size: 16px;
-      letter-spacing: 2px;
-      color: var(--text);
-      line-height: 1.1;
-    }
-
-    .ch-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .ch-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 1px;
-      color: var(--green);
-    }
-
-    /* FOOTER */
+    /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 14px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    footer p {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 1.5px;
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.72rem;
       color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .footer-markets {
-      display: flex;
-      gap: 20px;
-    }
-
-    .fm-item {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    .fm-item span { color: var(--green); }
-
-    /* KEYFRAMES */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.4; transform: scale(0.7); }
-    }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 640px) {
-      header { padding: 10px 16px; }
-      .main-layout { padding: 16px; }
-      .tabs-wrap { padding: 0 16px; }
-      footer { flex-direction: column; gap: 10px; }
-      .channel-grid { grid-template-columns: repeat(2, 1fr); }
+      padding-top: 8px;
     }
   </style>
 </head>
 <body>
+<div class="wrapper">
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    <div class="logo-icon">$</div>
-    <div class="logo-text">
-      <span class="logo-main">MARKETS LIVE</span>
-      <span class="logo-sub">Finance &amp; Trading Hub</span>
+  <!-- ── Header ── -->
+  <header>
+    <h1>YouTube Live Viewer <span>for Traders</span></h1>
+    <p>Paste a YouTube Live link or Channel link and press Load.</p>
+  </header>
+
+  <!-- ── Input card ── -->
+  <div class="card">
+    <div class="input-row">
+      <!-- URL input -->
+      <input
+        type="text"
+        id="url-input"
+        placeholder="https://www.youtube.com/watch?v=...  or  https://youtu.be/...  or channel URL"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      />
+      <!-- Load button -->
+      <button class="btn btn-primary" id="btn-load" onclick="loadStream()">Load Stream</button>
+      <!-- Clear button -->
+      <button class="btn btn-ghost" id="btn-clear" onclick="clearStream()">Clear</button>
     </div>
-  </div>
-  <div class="header-right">
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      LIVE
-    </div>
-    <div class="market-time" id="clock">--:--:-- EST</div>
-  </div>
-</header>
-
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-track">
-    <span class="ticker-item">
-      <span class="ticker-symbol">S&amp;P 500</span>
-      <span class="ticker-up">▲ 0.42%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">NASDAQ</span>
-      <span class="ticker-up">▲ 0.78%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">DOW</span>
-      <span class="ticker-down">▼ 0.11%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">BTC</span>
-      <span class="ticker-up">▲ 1.23%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">GOLD</span>
-      <span class="ticker-up">▲ 0.55%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">EUR/USD</span>
-      <span class="ticker-down">▼ 0.09%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">OIL</span>
-      <span class="ticker-down">▼ 0.31%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <!-- repeat for seamless loop -->
-    <span class="ticker-item">
-      <span class="ticker-symbol">S&amp;P 500</span>
-      <span class="ticker-up">▲ 0.42%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">NASDAQ</span>
-      <span class="ticker-up">▲ 0.78%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">DOW</span>
-      <span class="ticker-down">▼ 0.11%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">BTC</span>
-      <span class="ticker-up">▲ 1.23%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">GOLD</span>
-      <span class="ticker-up">▲ 0.55%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">EUR/USD</span>
-      <span class="ticker-down">▼ 0.09%</span>
-    </span>
-    <span class="ticker-sep">|</span>
-    <span class="ticker-item">
-      <span class="ticker-symbol">OIL</span>
-      <span class="ticker-down">▼ 0.31%</span>
-    </span>
-  </div>
-</div>
-
-<!-- CHANNEL TABS -->
-<div class="tabs-wrap" id="tabs"></div>
-
-<!-- MAIN -->
-<div class="main-layout">
-
-  <!-- NOW PLAYING -->
-  <div class="now-playing">
-    <div class="np-left">
-      <div>
-        <div class="np-label">▶ Now Playing</div>
-        <div class="np-name" id="npName">Bloomberg Markets</div>
-      </div>
-      <div class="np-desc" id="npDesc">Business & markets news 24/7</div>
-    </div>
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      LIVE STREAM
-    </div>
+    <!-- Validation error -->
+    <div id="error-msg"></div>
   </div>
 
-  <!-- VIDEO -->
-  <div class="video-area">
-    <div class="video-wrapper">
+  <!-- ── Embedded player (hidden until a valid URL is loaded) ── -->
+  <div class="card" id="player-wrap">
+    <div class="aspect-box">
       <iframe
-        id="mainFrame"
+        id="yt-iframe"
         src=""
-        title="Finance Live"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="autoplay; encrypted-media; picture-in-picture"
         allowfullscreen
+        title="YouTube Live Stream"
       ></iframe>
     </div>
   </div>
 
-  <!-- QUICK SELECT -->
-  <div>
-    <div class="section-title">All Channels — Click to Switch</div>
-    <div class="channel-grid" id="channelGrid"></div>
-  </div>
+  <!-- ── Footer ── -->
+  <footer>
+    Not affiliated with YouTube or any content creator.
+    Videos are displayed using YouTube's official embed feature.
+  </footer>
 
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <p>Markets Live · Finance &amp; Trading Hub · All Rights Reserved</p>
-  <div class="footer-markets">
-    <span class="fm-item">NYSE <span>OPEN</span></span>
-    <span class="fm-item">LSE <span>CLOSED</span></span>
-    <span class="fm-item">TSE <span>CLOSED</span></span>
-  </div>
-</footer>
-
 <script>
-  // ── CHANNEL DATA ──────────────────────────────────────────────────────────
-  // Using youtube-nocookie.com for all embeds (best compatibility)
-  const channels = [
-    {
-      id: 'bloomberg',
-      name: 'Bloomberg Markets',
-      tag: 'Business & Finance',
-      desc: 'Business & markets news 24/7',
-      // Bloomberg Markets & Finance YouTube live
-      videoId: 'dp8PhLsUcFE',
-    },
-    {
-      id: 'yahoo',
-      name: 'Yahoo Finance',
-      tag: 'Stocks & Markets',
-      desc: 'Live market coverage & analysis',
-      // Yahoo Finance live stream
-      videoId: 'CzgjFBuDpLc',
-    },
-    {
-      id: 'cnbc',
-      name: 'CNBC Television',
-      tag: 'TV News Finance',
-      desc: 'Wall Street & global markets',
-      // CNBC live
-      videoId: 'FntlzYpYxBw',
-    },
-    {
-      id: 'msnbc',
-      name: 'Reuters TV',
-      tag: 'Global Business',
-      desc: 'World business & financial news',
-      videoId: 'yHLQBEz0_Po',
-    },
-    {
-      id: 'wealthion',
-      name: 'Wealthion',
-      tag: 'Investing & Macro',
-      desc: 'Expert macro investing insights',
-      videoId: 'Q1gOsYwcvAo',
-    },
-    {
-      id: 'tradertv',
-      name: 'TraderTV Live',
-      tag: 'Day Trading',
-      desc: 'Live day trading sessions',
-      videoId: 'iiNEBSGDFAY',
-    },
-    {
-      id: 'kitco',
-      name: 'Kitco News',
-      tag: 'Gold & Commodities',
-      desc: 'Precious metals & commodities live',
-      videoId: 'OWMBFrxKQ4Q',
-    },
-    {
-      id: 'cointelegraph',
-      name: 'CoinTelegraph',
-      tag: 'Crypto & DeFi',
-      desc: 'Crypto market news & analysis',
-      videoId: 'JHESFDOzUNE',
-    },
-  ];
+  /* ─────────────────────────────────────────────
+     YouTube Live Viewer for Traders — JS logic
+     ───────────────────────────────────────────── */
 
-  let activeIdx = 0;
+  const STORAGE_KEY = 'yt_trader_last_url';
 
-  function buildTabs() {
-    const wrap = document.getElementById('tabs');
-    channels.forEach((ch, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'tab' + (i === 0 ? ' active' : '');
-      btn.innerHTML = `<span class="tab-dot"></span>${ch.name}`;
-      btn.onclick = () => switchChannel(i);
-      wrap.appendChild(btn);
-    });
+  /* ── Grab DOM references ── */
+  const input      = document.getElementById('url-input');
+  const errorMsg   = document.getElementById('error-msg');
+  const playerWrap = document.getElementById('player-wrap');
+  const iframe     = document.getElementById('yt-iframe');
+
+  /* ── Auto-load the last saved URL on page open ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      input.value = saved;
+      loadStream();
+    }
+  });
+
+  /* ── Allow pressing Enter inside the input field ── */
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadStream();
+  });
+
+  /* ──────────────────────────────────────────────
+     parseYouTubeURL()
+     Accepts various YouTube URL formats and returns
+     an embed URL string, or null if unrecognised.
+  ────────────────────────────────────────────── */
+  function parseYouTubeURL(raw) {
+    // Trim whitespace
+    const url = raw.trim();
+
+    // Attempt to construct a URL object for reliable parsing
+    let parsed;
+    try {
+      // Prepend protocol if missing so URL() doesn't throw
+      parsed = new URL(url.startsWith('http') ? url : 'https://' + url);
+    } catch {
+      return null; // not a valid URL at all
+    }
+
+    const host     = parsed.hostname.replace(/^www\./, '');
+    const pathname = parsed.pathname; // e.g. /watch or /channel/UCxxx or /@handle
+
+    /* ── 1. Standard watch URL: youtube.com/watch?v=VIDEO_ID ── */
+    if ((host === 'youtube.com' || host === 'm.youtube.com') && pathname === '/watch') {
+      const vid = parsed.searchParams.get('v');
+      if (vid) return buildVideoEmbed(vid);
+    }
+
+    /* ── 2. Short URL: youtu.be/VIDEO_ID ── */
+    if (host === 'youtu.be') {
+      const vid = pathname.slice(1); // strip leading /
+      if (vid) return buildVideoEmbed(vid);
+    }
+
+    /* ── 3. Shorts: youtube.com/shorts/VIDEO_ID ── */
+    const shortsMatch = pathname.match(/^\/shorts\/([a-zA-Z0-9_-]+)/);
+    if (shortsMatch) return buildVideoEmbed(shortsMatch[1]);
+
+    /* ── 4. Embedded URL already: youtube.com/embed/VIDEO_ID ── */
+    const embedMatch = pathname.match(/^\/embed\/([a-zA-Z0-9_-]+)/);
+    if (embedMatch) return buildVideoEmbed(embedMatch[1]);
+
+    /* ── 5. Live channel URL: youtube.com/channel/UCxxx/live ── */
+    const channelLiveMatch = pathname.match(/^\/(channel|c|user)\/([^/]+)\/live/);
+    if (channelLiveMatch) return buildChannelLiveEmbed(channelLiveMatch[2]);
+
+    /* ── 6. Handle URL: youtube.com/@handle/live ── */
+    const handleLiveMatch = pathname.match(/^\/@([^/]+)\/live/);
+    if (handleLiveMatch) return buildChannelLiveEmbed('@' + handleLiveMatch[1]);
+
+    /* ── 7. Channel root URL (attempt live sub-path) ── */
+    const channelRootMatch = pathname.match(/^\/(channel|c|user)\/([^/]+)\/?$/);
+    if (channelRootMatch) return buildChannelLiveEmbed(channelRootMatch[2]);
+
+    /* ── 8. Handle root URL: youtube.com/@handle ── */
+    const handleRootMatch = pathname.match(/^\/@([^/]+)\/?$/);
+    if (handleRootMatch) return buildChannelLiveEmbed('@' + handleRootMatch[1]);
+
+    // Unrecognised YouTube URL
+    return null;
   }
 
-  function buildGrid() {
-    const grid = document.getElementById('channelGrid');
-    channels.forEach((ch, i) => {
-      const card = document.createElement('div');
-      card.className = 'ch-card' + (i === 0 ? ' active' : '');
-      card.id = 'card-' + i;
-      card.innerHTML = `
-        <div class="ch-name">${ch.name}</div>
-        <div class="ch-tag">${ch.tag}</div>
-        <div class="ch-live"><span class="live-dot"></span> Live</div>
-      `;
-      card.onclick = () => switchChannel(i);
-      grid.appendChild(card);
-    });
+  /* ── Helpers to build embed URLs ── */
+
+  function buildVideoEmbed(videoId) {
+    // autoplay=1 starts playback automatically (muted=1 required by browsers)
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0`;
   }
 
-  function switchChannel(idx) {
-    activeIdx = idx;
-    const ch = channels[idx];
-
-    // Update iframe
-    const frame = document.getElementById('mainFrame');
-    frame.src = `https://www.youtube-nocookie.com/embed/${ch.videoId}?autoplay=1&rel=0&modestbranding=1&fs=1`;
-
-    // Update now playing
-    document.getElementById('npName').textContent = ch.name;
-    document.getElementById('npDesc').textContent = ch.desc;
-
-    // Update tabs
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', i === idx);
-    });
-
-    // Update grid cards
-    channels.forEach((_, i) => {
-      document.getElementById('card-' + i)?.classList.toggle('active', i === idx);
-    });
-
-    // Scroll tab into view
-    document.querySelectorAll('.tab')[idx]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  function buildChannelLiveEmbed(channelOrHandle) {
+    /* YouTube does not provide a direct embed URL for a live channel feed.
+       The best approach is to open the channel live page inside the iframe.
+       Note: YouTube may block iframe embedding for channel pages — in that
+       case the user should copy the video ID from the live stream directly. */
+    const base = channelOrHandle.startsWith('@')
+      ? `https://www.youtube.com/${channelOrHandle}/live`
+      : `https://www.youtube.com/channel/${channelOrHandle}/live`;
+    return base;
   }
 
-  // Clock
-  function updateClock() {
-    const now = new Date();
-    const est = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-    const h = String(est.getHours()).padStart(2,'0');
-    const m = String(est.getMinutes()).padStart(2,'0');
-    const s = String(est.getSeconds()).padStart(2,'0');
-    document.getElementById('clock').textContent = `${h}:${m}:${s} EST`;
+  /* ──────────────────────────────────────────────
+     loadStream()
+     Called when user clicks "Load Stream" or presses Enter.
+  ────────────────────────────────────────────── */
+  function loadStream() {
+    const raw = input.value.trim();
+
+    // Hide any previous error
+    hideError();
+
+    // Basic empty check
+    if (!raw) {
+      showError('Please paste a YouTube URL first.');
+      return;
+    }
+
+    // Check it references YouTube at all
+    if (!raw.includes('youtube.com') && !raw.includes('youtu.be')) {
+      showError('This does not look like a YouTube link. Please check the URL and try again.');
+      return;
+    }
+
+    // Try to parse into an embed URL
+    const embedUrl = parseYouTubeURL(raw);
+
+    if (!embedUrl) {
+      showError('Could not parse this YouTube URL. Try pasting the video URL directly (e.g. youtube.com/watch?v=...).');
+      return;
+    }
+
+    // Save to localStorage so we can restore on next open
+    localStorage.setItem(STORAGE_KEY, raw);
+
+    // Set iframe src and reveal the player
+    iframe.src = embedUrl;
+    playerWrap.style.display = 'block';
+
+    // Smooth-scroll to player on mobile
+    playerWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // Init
-  buildTabs();
-  buildGrid();
-  switchChannel(0);
-  updateClock();
-  setInterval(updateClock, 1000);
+  /* ──────────────────────────────────────────────
+     clearStream()
+     Called when user clicks "Clear".
+  ────────────────────────────────────────────── */
+  function clearStream() {
+    // Clear input field
+    input.value = '';
+
+    // Remove saved URL
+    localStorage.removeItem(STORAGE_KEY);
+
+    // Unload iframe by resetting src
+    iframe.src = '';
+    playerWrap.style.display = 'none';
+
+    // Hide any errors
+    hideError();
+
+    // Focus input for convenience
+    input.focus();
+  }
+
+  /* ── UI helpers ── */
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  function hideError() {
+    errorMsg.style.display = 'none';
+    errorMsg.textContent = '';
+  }
 </script>
-
 </body>
 </html>
