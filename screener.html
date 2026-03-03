@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Trading Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b0f;--bg2:#0d1318;--bg3:#111820;--border:#1a2535;--border2:#243044;--up:#00e5a0;--down:#ff3d5a;--neutral:#4a6080;--accent:#0098ff;--gold:#ffb400;--chf:#c084fc;--text:#c8d8e8;--text2:#7a9ab8;--text3:#3d5570;--mono:'Share Tech Mono',monospace;--sans:'Barlow Condensed',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.22;pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;padding:14px;max-width:1600px;margin:0 auto;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border:1px solid var(--border2);background:var(--bg2);margin-bottom:10px;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--up),var(--chf),var(--accent));}
+.logo{font-family:var(--sans);font-weight:900;font-size:22px;letter-spacing:4px;color:#fff;}
+.logo span{color:var(--accent);}
+.tag{font-size:10px;color:var(--text3);letter-spacing:2px;}
+.hright{display:flex;align-items:center;gap:16px;}
+.clk{font-size:12px;color:var(--text2);}
+.clk b{color:var(--accent);}
+.btn{font-family:var(--mono);font-size:10px;padding:5px 14px;border:1px solid var(--accent);background:rgba(0,152,255,.08);color:var(--accent);cursor:pointer;letter-spacing:1px;}
+.btn:hover{background:rgba(0,152,255,.2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* CONTEXT BAR */
+.ctx-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.cc{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--neutral);padding:14px 18px;position:relative;}
+.cc.ro{border-left-color:var(--down);}
+.cc.ron{border-left-color:var(--up);}
+.clabel{font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:6px;}
+.cval{font-family:var(--sans);font-size:28px;font-weight:700;}
+.csub{font-size:10px;color:var(--text2);margin-top:4px;}
+.badge{position:absolute;top:12px;right:12px;font-size:9px;padding:2px 8px;letter-spacing:2px;}
+.blv{background:rgba(0,229,160,.1);color:var(--up);border:1px solid var(--up);}
+.bcp{background:rgba(0,152,255,.1);color:var(--accent);border:1px solid var(--accent);}
+
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:10px;border:1px solid var(--border2);}
+.tab{font-family:var(--mono);font-size:10px;padding:8px 20px;border:none;background:var(--bg3);color:var(--text3);cursor:pointer;letter-spacing:2px;border-right:1px solid var(--border2);transition:all .15s;flex:1;text-align:center;}
+.tab:last-child{border-right:none;}
+.tab:hover{color:var(--text);background:var(--bg2);}
+.tab.active-a{background:rgba(0,229,160,.08);color:var(--up);border-bottom:2px solid var(--up);}
+.tab.active-b{background:rgba(255,61,90,.08);color:var(--down);border-bottom:2px solid var(--down);}
+.tab.active-c{background:rgba(192,132,252,.08);color:var(--chf);border-bottom:2px solid var(--chf);}
+.tab.active-m{background:rgba(255,180,0,.08);color:var(--gold);border-bottom:2px solid var(--gold);}
+
+/* CONTENT SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* GROUPS GRID */
+.groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.panel{background:var(--bg2);border:1px solid var(--border2);}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.pt{font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:3px;}
+.pb{font-size:9px;padding:2px 8px;letter-spacing:1px;}
+.pbu{background:rgba(0,229,160,.1);color:var(--up);border:1px solid rgba(0,229,160,.3);}
+.pbd{background:rgba(255,61,90,.1);color:var(--down);border:1px solid rgba(255,61,90,.3);}
+.pbn{background:rgba(74,96,128,.2);color:var(--neutral);border:1px solid rgba(74,96,128,.3);}
+.pbc{background:rgba(192,132,252,.1);color:var(--chf);border:1px solid rgba(192,132,252,.3);}
+.sl{font-size:9px;letter-spacing:2px;color:var(--text3);padding:5px 16px;border-bottom:1px solid var(--border);background:var(--bg3);}
+
+/* PAIR ROW */
+.pr{display:grid;grid-template-columns:90px 1fr 90px 90px;align-items:center;padding:7px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.pr:hover{background:rgba(255,255,255,.02);}
+.pr:last-child{border-bottom:none;}
+.pn{font-size:13px;font-weight:600;color:#fff;}
+.pd{font-size:10px;color:var(--text3);}
+.pc{font-size:10px;text-align:center;}
+.cu{color:var(--up);}
+.cd{color:var(--down);}
+.cn{color:var(--neutral);}
+.cc2{color:var(--chf);}
+.ti{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+.dot{width:8px;height:8px;border-radius:50%;}
+.du{background:var(--up);box-shadow:0 0 6px var(--up);}
+.dd{background:var(--down);box-shadow:0 0 6px var(--down);}
+.dn{background:var(--neutral);}
+.dc{background:var(--chf);box-shadow:0 0 6px var(--chf);}
+.tv{font-size:10px;}
+
+/* FULL WIDTH GRID */
+.full-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+
+/* INDEX ROW */
+.ir{display:grid;grid-template-columns:70px 1fr 60px;align-items:center;padding:7px 16px;border-bottom:1px solid var(--border);}
+.ir:last-child{border-bottom:none;}
+.in{font-size:12px;color:#fff;font-weight:600;}
+.ig{font-size:9px;color:var(--text3);}
+.ib{width:100%;height:3px;background:var(--border2);border-radius:2px;margin-top:4px;}
+.if{height:100%;border-radius:2px;transition:width .5s;}
+.ip{font-size:10px;}
+
+/* MULTI ROW */
+.mr{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.mr:last-child{border-bottom:none;}
+.ml{display:flex;flex-direction:column;gap:3px;flex:1;}
+.mp{display:flex;gap:5px;flex-wrap:wrap;}
+.tg{font-size:10px;padding:2px 6px;}
+.tu{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2);color:var(--up);}
+.td{background:rgba(255,61,90,.1);border:1px solid rgba(255,61,90,.2);color:var(--down);}
+.tc{background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.2);color:var(--chf);}
+.md2{font-size:10px;color:var(--text3);}
+.ab{font-size:9px;padding:3px 10px;background:rgba(255,180,0,.1);border:1px solid rgba(255,180,0,.2);color:var(--gold);white-space:nowrap;}
+
+/* NOTES */
+.notes{padding:12px 16px;height:200px;resize:none;width:100%;background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:11px;line-height:1.8;outline:none;}
+.notes::placeholder{color:var(--text3);}
+
+/* STATUS BAR */
+.sbar{display:flex;align-items:center;justify-content:space-between;padding:7px 16px;border:1px solid var(--border);background:var(--bg3);font-size:10px;color:var(--text3);flex-wrap:wrap;gap:8px;}
+.si{display:flex;align-items:center;gap:6px;}
+.sd{width:5px;height:5px;border-radius:50%;background:var(--up);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* SEARCH */
+.search-bar{padding:8px 16px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.search-input{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:11px;padding:5px 10px;outline:none;}
+.search-input:focus{border-color:var(--accent);}
+.search-input::placeholder{color:var(--text3);}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--bg3);flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--text3);}
+.leg-dot{width:6px;height:6px;border-radius:50%;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo">FSP<span>.</span>DASHBOARD</div>
+    <div class="tag">CORRELATION TRADING SYSTEM · PROREALTIME · ALL 28 PAIRS</div>
+  </div>
+  <div class="hright">
+    <div class="clk">UTC <b id="clk">--:--:--</b></div>
+    <button class="btn" id="fb" onclick="fetchAll()">&#8635; REFRESH</button>
+  </div>
+</div>
+
+<!-- CONTEXT BAR -->
+<div class="ctx-bar">
+  <div class="cc" id="jc">
+    <div class="clabel">USD/JPY CONTEXT</div>
+    <div class="cval" id="jv" style="color:var(--neutral)">&#8212;</div>
+    <div class="csub" id="js">Click REFRESH to load...</div>
+    <span class="badge blv">LIVE</span>
+  </div>
+  <div class="cc" id="nc">
+    <div class="clabel">NAS100 CONTEXT</div>
+    <div class="cval" id="nv" style="color:var(--neutral)">&#8212;</div>
+    <div class="csub" id="ns">Click REFRESH to load...</div>
+    <span class="badge blv">LIVE</span>
+  </div>
+  <div class="cc" id="gc">
+    <div class="clabel">GLOBAL CONTEXT</div>
+    <div class="cval" id="gv" style="color:var(--neutral)">&#8212;</div>
+    <div class="csub" id="gs">Waiting for data...</div>
+    <span class="badge bcp">COMPUTED</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active-a" onclick="showTab('A')">&#9650; GROUP A &mdash; RISE ON RISK OFF</div>
+  <div class="tab" onclick="showTab('B')">&#9660; GROUP B &mdash; FALL ON RISK OFF</div>
+  <div class="tab" onclick="showTab('C')">&#9670; GROUP C &mdash; CHF PAIRS</div>
+  <div class="tab" onclick="showTab('M')">&#9733; MULTI-TRADE + INDICES</div>
+</div>
+
+<!-- SECTION A -->
+<div class="section active" id="sec-A">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--up)"></div>ALIGNED with Risk OFF context</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--neutral)"></div>COUNTER or MIXED</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--down)"></div>Going down (counter for group A)</div>
+  </div>
+  <div class="search-bar"><input class="search-input" id="search-A" oninput="filterRows('A')" placeholder="// Search pair... e.g: EUR/AUD"></div>
+  <div class="groups-grid">
+    <div class="panel">
+      <div class="ph"><div class="pt">EURO PAIRS</div><span class="pb pbu">EUR = Semi-refuge</span></div>
+      <div class="sl">EUR vs risk currencies · Rise when risk appetite falls</div>
+      <div id="rows-A-EUR">
+        <div class="pr" data-pair="EURAUD"><div><div class="pn">EUR/AUD</div></div><div><div class="pd">Euro vs Risk AUD</div></div><div class="pc cn" id="c-EURAUD">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURAUD"></div><span class="tv" id="t-EURAUD">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURNZD"><div><div class="pn">EUR/NZD</div></div><div><div class="pd">Euro vs Risk NZD</div></div><div class="pc cn" id="c-EURNZD">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURNZD"></div><span class="tv" id="t-EURNZD">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURCAD"><div><div class="pn">EUR/CAD</div></div><div><div class="pd">Euro vs Petro-CAD</div></div><div class="pc cn" id="c-EURCAD">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURCAD"></div><span class="tv" id="t-EURCAD">&#8212;</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">GBP PAIRS</div><span class="pb pbu">GBP vs Risk currencies</span></div>
+      <div class="sl">GBP vs risk currencies · Rise when risk appetite falls</div>
+      <div id="rows-A-GBP">
+        <div class="pr" data-pair="GBPAUD"><div><div class="pn">GBP/AUD</div></div><div><div class="pd">GBP vs Risk AUD</div></div><div class="pc cn" id="c-GBPAUD">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPAUD"></div><span class="tv" id="t-GBPAUD">&#8212;</span></div></div>
+        <div class="pr" data-pair="GBPNZD"><div><div class="pn">GBP/NZD</div></div><div><div class="pd">GBP vs Risk NZD</div></div><div class="pc cn" id="c-GBPNZD">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPNZD"></div><span class="tv" id="t-GBPNZD">&#8212;</span></div></div>
+        <div class="pr" data-pair="GBPCAD"><div><div class="pn">GBP/CAD</div></div><div><div class="pd">GBP vs Petro-CAD</div></div><div class="pc cn" id="c-GBPCAD">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPCAD"></div><span class="tv" id="t-GBPCAD">&#8212;</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">USD PAIRS</div><span class="pb pbu">USD vs Risk currencies</span></div>
+      <div class="sl">USD vs risk currencies · Dollar gains in Risk OFF</div>
+      <div id="rows-A-USD">
+        <div class="pr" data-pair="USDCAD"><div><div class="pn">USD/CAD</div></div><div><div class="pd">Dollar vs Petro-CAD</div></div><div class="pc cn" id="c-USDCAD">&#8212;</div><div class="ti"><div class="dot dn" id="d-USDCAD"></div><span class="tv" id="t-USDCAD">&#8212;</span></div></div>
+        <div class="pr" data-pair="USDAUD" style="opacity:.5"><div><div class="pn">AUD/USD</div></div><div><div class="pd">Risk AUD falls vs USD</div></div><div class="pc cn" id="c-USDAUD">&#8212;</div><div class="ti"><div class="dot dn" id="d-USDAUD"></div><span class="tv" id="t-USDAUD">&#8212;</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">GOLD + SAFE HAVEN</div><span class="pb pbu">Ultimate Risk OFF</span></div>
+      <div class="sl">Gold rises strongly in Risk OFF · Best safe haven play</div>
+      <div id="rows-A-GOLD">
+        <div class="pr" data-pair="XAUUSD"><div><div class="pn">XAU/USD</div></div><div><div class="pd">Gold vs Dollar · Safe haven</div></div><div class="pc cn" id="c-XAUUSD">&#8212;</div><div class="ti"><div class="dot dn" id="d-XAUUSD"></div><span class="tv" id="t-XAUUSD">&#8212;</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION B -->
+<div class="section" id="sec-B">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--down)"></div>ALIGNED with Risk OFF (falling = correct)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--neutral)"></div>COUNTER or MIXED</div>
+  </div>
+  <div class="search-bar"><input class="search-input" id="search-B" oninput="filterRows('B')" placeholder="// Search pair... e.g: GBP/JPY"></div>
+  <div class="groups-grid">
+    <div class="panel">
+      <div class="ph"><div class="pt">JPY CROSS PAIRS</div><span class="pb pbd">JPY = Strong refuge</span></div>
+      <div class="sl">Risk currencies vs JPY · Fall hardest in Risk OFF</div>
+      <div id="rows-B-JPY">
+        <div class="pr" data-pair="GBPJPY"><div><div class="pn">GBP/JPY</div></div><div><div class="pd">Risk GBP vs Refuge JPY · Most volatile</div></div><div class="pc cn" id="c-GBPJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPJPY"></div><span class="tv" id="t-GBPJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="AUDJPY"><div><div class="pn">AUD/JPY</div></div><div><div class="pd">Risk AUD vs Refuge JPY</div></div><div class="pc cn" id="c-AUDJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-AUDJPY"></div><span class="tv" id="t-AUDJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="NZDJPY"><div><div class="pn">NZD/JPY</div></div><div><div class="pd">Risk NZD vs Refuge JPY</div></div><div class="pc cn" id="c-NZDJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-NZDJPY"></div><span class="tv" id="t-NZDJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="CADJPY"><div><div class="pn">CAD/JPY</div></div><div><div class="pd">Petro-CAD vs Refuge JPY</div></div><div class="pc cn" id="c-CADJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-CADJPY"></div><span class="tv" id="t-CADJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURJPY"><div><div class="pn">EUR/JPY</div></div><div><div class="pd">Euro vs Refuge JPY</div></div><div class="pc cn" id="c-EURJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURJPY"></div><span class="tv" id="t-EURJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="USDJPY2"><div><div class="pn">USD/JPY</div></div><div><div class="pd">Dollar vs Refuge JPY · Complex</div></div><div class="pc cn" id="c-USDJPY2">&#8212;</div><div class="ti"><div class="dot dn" id="d-USDJPY2"></div><span class="tv" id="t-USDJPY2">&#8212;</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">RISK vs RISK PAIRS</div><span class="pb pbd">Weaker risk falls more</span></div>
+      <div class="sl">Both risk currencies · Weaker one falls harder in Risk OFF</div>
+      <div id="rows-B-RISK">
+        <div class="pr" data-pair="AUDUSD"><div><div class="pn">AUD/USD</div></div><div><div class="pd">Risk AUD vs Dollar</div></div><div class="pc cn" id="c-AUDUSD">&#8212;</div><div class="ti"><div class="dot dn" id="d-AUDUSD"></div><span class="tv" id="t-AUDUSD">&#8212;</span></div></div>
+        <div class="pr" data-pair="NZDUSD"><div><div class="pn">NZD/USD</div></div><div><div class="pd">Risk NZD vs Dollar</div></div><div class="pc cn" id="c-NZDUSD">&#8212;</div><div class="ti"><div class="dot dn" id="d-NZDUSD"></div><span class="tv" id="t-NZDUSD">&#8212;</span></div></div>
+        <div class="pr" data-pair="GBPUSD"><div><div class="pn">GBP/USD</div></div><div><div class="pd">Risk GBP vs Dollar</div></div><div class="pc cn" id="c-GBPUSD">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPUSD"></div><span class="tv" id="t-GBPUSD">&#8212;</span></div></div>
+        <div class="pr" data-pair="AUDNZD"><div><div class="pn">AUD/NZD</div></div><div><div class="pd">Risk AUD vs Risk NZD · Relative</div></div><div class="pc cn" id="c-AUDNZD">&#8212;</div><div class="ti"><div class="dot dn" id="d-AUDNZD"></div><span class="tv" id="t-AUDNZD">&#8212;</span></div></div>
+        <div class="pr" data-pair="AUDCAD"><div><div class="pn">AUD/CAD</div></div><div><div class="pd">Risk AUD vs Petro-CAD</div></div><div class="pc cn" id="c-AUDCAD">&#8212;</div><div class="ti"><div class="dot dn" id="d-AUDCAD"></div><span class="tv" id="t-AUDCAD">&#8212;</span></div></div>
+        <div class="pr" data-pair="NZDCAD"><div><div class="pn">NZD/CAD</div></div><div><div class="pd">Risk NZD vs Petro-CAD</div></div><div class="pc cn" id="c-NZDCAD">&#8212;</div><div class="ti"><div class="dot dn" id="d-NZDCAD"></div><span class="tv" id="t-NZDCAD">&#8212;</span></div></div>
+        <div class="pr" data-pair="GBPAUD2"><div><div class="pn">GBP/AUD</div></div><div><div class="pd">GBP vs Risk AUD · Also in A</div></div><div class="pc cn" id="c-GBPAUD2">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPAUD2"></div><span class="tv" id="t-GBPAUD2">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURGBP"><div><div class="pn">EUR/GBP</div></div><div><div class="pd">Euro vs GBP · Internal EU</div></div><div class="pc cn" id="c-EURGBP">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURGBP"></div><span class="tv" id="t-EURGBP">&#8212;</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION C -->
+<div class="section" id="sec-C">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--chf)"></div>CHF pairs · Both can be refuge · Context dependent</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--up)"></div>CHF gaining (Risk OFF aligned)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--down)"></div>CHF losing</div>
+  </div>
+  <div class="search-bar"><input class="search-input" id="search-C" oninput="filterRows('C')" placeholder="// Search pair... e.g: CHF/JPY"></div>
+  <div class="groups-grid">
+    <div class="panel">
+      <div class="ph"><div class="pt">CHF vs RISK CURRENCIES</div><span class="pb pbc">CHF gains in Risk OFF</span></div>
+      <div class="sl">CHF is refuge · These rise when risk sentiment falls</div>
+      <div id="rows-C-UP">
+        <div class="pr" data-pair="AUDCHF"><div><div class="pn">AUD/CHF</div></div><div><div class="pd">Risk AUD vs Refuge CHF</div></div><div class="pc cn" id="c-AUDCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-AUDCHF"></div><span class="tv" id="t-AUDCHF">&#8212;</span></div></div>
+        <div class="pr" data-pair="NZDCHF"><div><div class="pn">NZD/CHF</div></div><div><div class="pd">Risk NZD vs Refuge CHF</div></div><div class="pc cn" id="c-NZDCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-NZDCHF"></div><span class="tv" id="t-NZDCHF">&#8212;</span></div></div>
+        <div class="pr" data-pair="CADCHF"><div><div class="pn">CAD/CHF</div></div><div><div class="pd">Petro-CAD vs Refuge CHF</div></div><div class="pc cn" id="c-CADCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-CADCHF"></div><span class="tv" id="t-CADCHF">&#8212;</span></div></div>
+        <div class="pr" data-pair="GBPCHF"><div><div class="pn">GBP/CHF</div></div><div><div class="pd">GBP vs Refuge CHF</div></div><div class="pc cn" id="c-GBPCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-GBPCHF"></div><span class="tv" id="t-GBPCHF">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURCHF"><div><div class="pn">EUR/CHF</div></div><div><div class="pd">Euro vs Refuge CHF</div></div><div class="pc cn" id="c-EURCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURCHF"></div><span class="tv" id="t-EURCHF">&#8212;</span></div></div>
+        <div class="pr" data-pair="USDCHF"><div><div class="pn">USD/CHF</div></div><div><div class="pd">Dollar vs Refuge CHF · Complex</div></div><div class="pc cn" id="c-USDCHF">&#8212;</div><div class="ti"><div class="dot dn" id="d-USDCHF"></div><span class="tv" id="t-USDCHF">&#8212;</span></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">CHF vs JPY</div><span class="pb pbc">Refuge vs Refuge</span></div>
+      <div class="sl">Both are safe havens · Direction depends on which refuge is stronger</div>
+      <div id="rows-C-MIX">
+        <div class="pr" data-pair="CHFJPY"><div><div class="pn">CHF/JPY</div></div><div><div class="pd">Refuge CHF vs Refuge JPY · Complex</div></div><div class="pc cn" id="c-CHFJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-CHFJPY"></div><span class="tv" id="t-CHFJPY">&#8212;</span></div></div>
+        <div class="pr" data-pair="EURUSD"><div><div class="pn">EUR/USD</div></div><div><div class="pd">Euro vs Dollar · Rate differential</div></div><div class="pc cn" id="c-EURUSD">&#8212;</div><div class="ti"><div class="dot dn" id="d-EURUSD"></div><span class="tv" id="t-EURUSD">&#8212;</span></div></div>
+        <div class="pr" data-pair="USDJPY"><div><div class="pn">USD/JPY</div></div><div><div class="pd">Dollar vs JPY · Both complex</div></div><div class="pc cn" id="c-USDJPY">&#8212;</div><div class="ti"><div class="dot dn" id="d-USDJPY"></div><span class="tv" id="t-USDJPY">&#8212;</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION M: MULTI TRADE + INDICES -->
+<div class="section" id="sec-M">
+  <div class="full-grid">
+    <!-- INDICES -->
+    <div class="panel">
+      <div class="ph"><div class="pt">INDICES</div><span class="pb pbd">Fall on Risk OFF</span></div>
+      <div class="sl">US + EU · All fall in Risk OFF environment</div>
+      <div class="ir"><div><div class="in">NAS100</div><div class="ig">US · Tech · Most sensitive</div></div><div><div class="ip cn" id="c-NAS100">&#8212;</div><div class="ib"><div class="if" id="b-NAS100" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-NAS100"></div></div></div>
+      <div class="ir"><div><div class="in">US500</div><div class="ig">US · S&amp;P 500</div></div><div><div class="ip cn" id="c-US500">&#8212;</div><div class="ib"><div class="if" id="b-US500" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-US500"></div></div></div>
+      <div class="ir"><div><div class="in">US30</div><div class="ig">US · Dow Jones</div></div><div><div class="ip cn" id="c-US30">&#8212;</div><div class="ib"><div class="if" id="b-US30" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-US30"></div></div></div>
+      <div class="ir"><div><div class="in">DAX</div><div class="ig">EU · Germany</div></div><div><div class="ip cn" id="c-DAX">&#8212;</div><div class="ib"><div class="if" id="b-DAX" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-DAX"></div></div></div>
+      <div class="ir"><div><div class="in">UK100</div><div class="ig">EU · FTSE</div></div><div><div class="ip cn" id="c-UK100">&#8212;</div><div class="ib"><div class="if" id="b-UK100" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-UK100"></div></div></div>
+      <div class="ir"><div><div class="in">IBEX35</div><div class="ig">EU · Spain</div></div><div><div class="ip cn" id="c-IBEX35">&#8212;</div><div class="ib"><div class="if" id="b-IBEX35" style="width:50%;background:var(--neutral)"></div></div></div><div class="ti"><div class="dot dn" id="d-IBEX35"></div></div></div>
+    </div>
+
+    <!-- MULTI TRADE RISK OFF -->
+    <div class="panel">
+      <div class="ph"><div class="pt">RISK OFF SETUPS</div><span class="pb pbd">JPY up · NAS down</span></div>
+      <div class="sl">High quality · Same macro · 3 accounts</div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG EUR/AUD</span><span class="tg tu">LONG GBP/AUD</span><span class="tg tu">LONG EUR/NZD</span></div><div class="md2">AUD weakness across 3 pairs</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg td">SHORT GBP/JPY</span><span class="tg td">SHORT AUD/JPY</span><span class="tg td">SHORT NZD/JPY</span></div><div class="md2">JPY strength across 3 pairs</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG XAU/USD</span><span class="tg tu">LONG USD/CAD</span><span class="tg td">SHORT AUD/USD</span></div><div class="md2">Gold + Dollar strength</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG EUR/AUD</span><span class="tg td">SHORT AUD/JPY</span><span class="tg td">SHORT NAS100</span></div><div class="md2">AUD weakness + Index fall</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tc">SHORT AUD/CHF</span><span class="tg tc">SHORT NZD/CHF</span><span class="tg td">SHORT AUD/JPY</span></div><div class="md2">Double refuge vs risk AUD</div></div><span class="ab">3 ACCOUNTS</span></div>
+    </div>
+
+    <!-- MULTI TRADE RISK ON -->
+    <div class="panel">
+      <div class="ph"><div class="pt">RISK ON SETUPS</div><span class="pb pbu">JPY down · NAS up</span></div>
+      <div class="sl">High quality · Same macro · 3 accounts</div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG GBP/JPY</span><span class="tg tu">LONG AUD/JPY</span><span class="tg tu">LONG NZD/JPY</span></div><div class="md2">JPY weakness across 3 pairs</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG AUD/USD</span><span class="tg tu">LONG NZD/USD</span><span class="tg tu">LONG GBP/USD</span></div><div class="md2">Risk currencies rising vs Dollar</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tu">LONG NAS100</span><span class="tg tu">LONG US500</span><span class="tg tu">LONG DAX</span></div><div class="md2">All indices rising in Risk ON</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg td">SHORT EUR/AUD</span><span class="tg td">SHORT EUR/NZD</span><span class="tg tu">LONG AUD/JPY</span></div><div class="md2">AUD strength double play</div></div><span class="ab">3 ACCOUNTS</span></div>
+      <div class="mr"><div class="ml"><div class="mp"><span class="tg tc">LONG AUD/CHF</span><span class="tg tc">LONG NZD/CHF</span><span class="tg tu">LONG AUD/JPY</span></div><div class="md2">Risk ON · CHF + JPY both weaken</div></div><span class="ab">3 ACCOUNTS</span></div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="panel">
+    <div class="ph"><div class="pt">SESSION NOTES</div><span class="pb pbn">MANUAL</span></div>
+    <div class="sl">Your observations · Context · Levels · Plans</div>
+    <textarea class="notes" placeholder="// Session notes...
+// JPY strong since 09:00 UTC · Risk OFF confirmed
+// NAS100 broke 18500 support · Targeting 18200
+// EUR/AUD confirmed H1 uptrend · FSP aligned
+// GBP/AUD watching for pullback entry
+// AUD/CHF + AUD/JPY both short · Double confluence"></textarea>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="sbar">
+  <div class="si"><div class="sd"></div><span>FSP DASHBOARD v2.0 · ALL 28 PAIRS</span></div>
+  <div class="si"><span>PRICES: YAHOO FINANCE · AUTO REFRESH 5min</span></div>
+  <div class="si"><span id="lu">Last update: &mdash;</span></div>
+  <div class="si"><span>&#9888; ALWAYS CONFIRM ON CHART · NOT FINANCIAL ADVICE</span></div>
+</div>
+
+</div>
+<script>
+// CLOCK
+function tick(){document.getElementById('clk').textContent=new Date().toUTCString().slice(17,25);}
+setInterval(tick,1000);tick();
+
+// TABS
+function showTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>{el.className='tab';});
+  document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+  const tabs=document.querySelectorAll('.tab');
+  const map={A:0,B:1,C:2,M:3};
+  tabs[map[t]].className='tab active-'+t.toLowerCase();
+  document.getElementById('sec-'+t).classList.add('active');
+}
+
+// SYMBOLS
+const SYM={
+  USDJPY:"USDJPY=X",NAS100:"NQ=F",
+  EURAUD:"EURAUD=X",EURNZD:"EURNZD=X",EURCAD:"EURCAD=X",
+  GBPAUD:"GBPAUD=X",GBPNZD:"GBPNZD=X",GBPCAD:"GBPCAD=X",
+  USDCAD:"USDCAD=X",XAUUSD:"GC=F",
+  GBPJPY:"GBPJPY=X",AUDJPY:"AUDJPY=X",NZDJPY:"NZDJPY=X",
+  CADJPY:"CADJPY=X",EURJPY:"EURJPY=X",
+  AUDUSD:"AUDUSD=X",NZDUSD:"NZDUSD=X",GBPUSD:"GBPUSD=X",
+  AUDNZD:"AUDNZD=X",AUDCAD:"AUDCAD=X",NZDCAD:"NZDCAD=X",
+  EURGBP:"EURGBP=X",EURUSD:"EURUSD=X",
+  AUDCHF:"AUDCHF=X",NZDCHF:"NZDCHF=X",CADCHF:"CADCHF=X",
+  GBPCHF:"GBPCHF=X",EURCHF:"EURCHF=X",USDCHF:"USDCHF=X",CHFJPY:"CHFJPY=X",
+  US500:"ES=F",US30:"YM=F",DAX:"^GDAXI",UK100:"^FTSE",IBEX35:"^IBEX"
+};
+
+const GA=["EURAUD","EURNZD","EURCAD","GBPAUD","GBPNZD","GBPCAD","USDCAD","XAUUSD"];
+const GB=["GBPJPY","AUDJPY","NZDJPY","CADJPY","EURJPY","AUDUSD","NZDUSD","GBPUSD","AUDNZD","AUDCAD","NZDCAD","EURGBP"];
+const GC=["AUDCHF","NZDCHF","CADCHF","GBPCHF","EURCHF","USDCHF","CHFJPY","EURUSD","USDJPY"];
+const GI=["NAS100","US500","US30","DAX","UK100","IBEX35"];
+
+let PD={};
+
+async function fetchOne(k,tk){
+  try{
+    const u=`https://query1.finance.yahoo.com/v8/finance/chart/${tk}?interval=1d&range=5d`;
+    const r=await fetch("https://api.allorigins.win/get?url="+encodeURIComponent(u));
+    const j=await r.json();
+    const d=JSON.parse(j.contents);
+    const cl=d.chart.result[0].indicators.quote[0].close.filter(x=>x!==null);
+    if(cl.length>=2){const c=cl[cl.length-1],p=cl[cl.length-2];return{curr:c,prev:p,chg:((c-p)/p)*100};}
+  }catch(e){}return null;
+}
+
+async function fetchAll(){
+  const b=document.getElementById('fb');b.disabled=true;b.textContent='LOADING...';
+  for(const[k,t]of Object.entries(SYM)){const d=await fetchOne(k,t);if(d)PD[k]=d;}
+  updateUI();
+  b.disabled=false;b.innerHTML='&#8635; REFRESH';
+  document.getElementById('lu').textContent='Last update: '+new Date().toUTCString().slice(17,25)+' UTC';
+}
+
+function updateUI(){
+  const jd=PD.USDJPY,nd=PD.NAS100;
+  let jpyUp=false,nasDown=false;
+
+  if(jd){
+    jpyUp=jd.curr<jd.prev;
+    document.getElementById('jc').className='cc '+(jpyUp?'ro':'ron');
+    document.getElementById('jv').style.color=jpyUp?'var(--down)':'var(--up)';
+    document.getElementById('jv').textContent=jpyUp?'JPY STRONG':'JPY WEAK';
+    document.getElementById('js').textContent='USD/JPY '+jd.curr.toFixed(3)+' · '+(jd.chg>0?'+':'')+jd.chg.toFixed(2)+'%';
+  }
+  if(nd){
+    nasDown=nd.curr<nd.prev;
+    document.getElementById('nc').className='cc '+(nasDown?'ro':'ron');
+    document.getElementById('nv').style.color=nasDown?'var(--down)':'var(--up)';
+    document.getElementById('nv').textContent=nasDown?'NAS FALLING':'NAS RISING';
+    document.getElementById('ns').textContent='NQ '+nd.curr.toFixed(0)+' · '+(nd.chg>0?'+':'')+nd.chg.toFixed(2)+'%';
+  }
+
+  let ctx='unknown';
+  if(jd&&nd){
+    if(jpyUp&&nasDown){
+      ctx='riskoff';
+      document.getElementById('gc').className='cc ro';
+      document.getElementById('gv').style.color='var(--down)';
+      document.getElementById('gv').textContent='RISK OFF';
+      document.getElementById('gs').textContent='JPY strong + NAS falling · A: LONG · B: SHORT · C: CHF strong';
+    }else if(!jpyUp&&!nasDown){
+      ctx='riskon';
+      document.getElementById('gc').className='cc ron';
+      document.getElementById('gv').style.color='var(--up)';
+      document.getElementById('gv').textContent='RISK ON';
+      document.getElementById('gs').textContent='JPY weak + NAS rising · A: SHORT · B: LONG · C: CHF weak';
+    }else{
+      ctx='mixed';
+      document.getElementById('gc').className='cc';
+      document.getElementById('gv').style.color='var(--neutral)';
+      document.getElementById('gv').textContent='MIXED';
+      document.getElementById('gs').textContent='JPY and NAS not aligned · Wait for confirmation';
+    }
+  }
+
+  for(const[k,d]of Object.entries(PD)){
+    if(k==='USDJPY'||k==='NAS100')continue;
+    updateRow(k,d,ctx);
+  }
+}
+
+function updateRow(k,d,ctx){
+  const ids=[k, k+'2'];
+  ids.forEach(id=>{
+    const c=document.getElementById('c-'+id);
+    const dot=document.getElementById('d-'+id);
+    const t=document.getElementById('t-'+id);
+    const bar=document.getElementById('b-'+id);
+    if(!c)return;
+
+    const up=d.chg>0,pct=d.chg.toFixed(2);
+    let aligned=false;
+
+    if(ctx==='riskoff'){
+      if(GA.includes(k)&&up)aligned=true;
+      if(GB.includes(k)&&!up)aligned=true;
+      if(GC.includes(k)&&!up)aligned=true;
+      if(GI.includes(k)&&!up)aligned=true;
+    }else if(ctx==='riskon'){
+      if(GA.includes(k)&&!up)aligned=true;
+      if(GB.includes(k)&&up)aligned=true;
+      if(GC.includes(k)&&up)aligned=true;
+      if(GI.includes(k)&&up)aligned=true;
+    }
+
+    if(ctx==='unknown'){c.textContent='—';c.className='pc cn';}
+    else if(ctx==='mixed'){c.textContent='~ MIXED';c.className='pc cn';}
+    else if(aligned){c.textContent='★ ALIGNED';c.className='pc '+(up?'cu':'cd');}
+    else{c.textContent='✗ COUNTER';c.className='pc cn';}
+
+    if(dot)dot.className='dot '+(up?'du':'dd');
+    if(t){t.textContent=(up?'▲ ':'▼ ')+Math.abs(pct)+'%';t.style.color=up?'var(--up)':'var(--down)';}
+    if(bar){
+      const w=Math.min(Math.max(50+d.chg*5,5),95);
+      bar.style.width=w+'%';bar.style.background=up?'var(--up)':'var(--down)';
+      c.textContent=(up?'▲ ':'▼ ')+Math.abs(pct)+'%';
+      c.style.color=up?'var(--up)':'var(--down)';
+    }
+  });
+}
+
+// SEARCH FILTER
+function filterRows(group){
+  const q=document.getElementById('search-'+group).value.toLowerCase().replace('/','');
+  document.querySelectorAll('#sec-'+group+' .pr').forEach(row=>{
+    const pair=(row.dataset.pair||'').toLowerCase();
+    const name=row.querySelector('.pn')?row.querySelector('.pn').textContent.toLowerCase().replace('/',''):'';
+    row.style.display=(pair.includes(q)||name.includes(q)||q==='')?'':'none';
+  });
+}
+
+// AUTO LOAD
+fetchAll();
+setInterval(fetchAll,300000);
+</script>
+</body>
+</html>
