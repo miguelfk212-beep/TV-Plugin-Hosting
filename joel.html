@@ -1507,7 +1507,6 @@ async function joelSend(){
   const system=`Eres Joel, asesor de trading institucional. Acceso en tiempo real a 8 instrumentos: NAS100, SP500, DAX, UK100, AUDJPY, CADJPY, AUDCAD, GBPAUD. Directo, concreto, en español. El trader usa FSP Breakout + Volume Heatmap en cTrader/ProRealTime/TradingView y tiene prop firms. Piensas como institucional: liquidez, retail contra-señal, COT, sesiones. Responde en HTML simple con <b> énfasis y <br> saltos. Máx 300 palabras.`;
 
   const msgs=[
-    {role:'system',content:system},
     ...joelHistory.slice(-8),
     {role:'user',content:`${ctx}${notes?'\nNotas del trader: '+notes:''}\n\nPREGUNTA: ${msg}`}
   ];
@@ -1524,7 +1523,7 @@ async function joelSend(){
       body:JSON.stringify({
         model:'claude-haiku-4-5-20251001',
         max_tokens:1000,
-        system:'Eres Joel, asesor de trading institucional experto. Responde en español. Sé directo y concreto. Analiza siempre retail vs institucional. Identifica confluencias y señales de trampa retail.',
+        system:system,
         messages:msgs
       })
     });
