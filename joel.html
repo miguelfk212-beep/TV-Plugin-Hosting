@@ -19,6 +19,13 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--mono);font-si
 body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.03) 3px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9998;}
 
 /* TOPBAR */
+/* JOEL FULLSCREEN */
+#joel-panel.joel-fs{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  z-index:5000;grid-row:unset;
+  border:none;border-radius:0;
+}
+.joel-fs-hide{display:none!important;}
 .topbar{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--b);padding:0 14px;height:34px;position:sticky;top:0;z-index:200;}
 .logo{font-size:12px;font-weight:600;letter-spacing:4px;color:var(--acc);}
 .logo em{color:var(--t3);font-style:normal;}
@@ -333,19 +340,25 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
   </div>
 
   <!-- COL 4: JOEL AI PANEL (spans 2 rows) -->
-  <div class="p ai-panel" style="grid-row:span 2;display:flex;flex-direction:column;">
+  <div class="p ai-panel" id="joel-panel" style="grid-row:span 2;display:flex;flex-direction:column;">
     <!-- HEADER -->
     <div class="ai-header" style="flex-shrink:0;">
       <div class="ai-logo">
         <div class="ai-icon" style="font-size:11px;font-weight:700;">J</div>
         <div>
           <div class="ai-title">JOEL · AI ADVISOR</div>
-          <div class="ai-sub" id="joel-sub">Groq · Llama 3.3 70B · Gratis</div>
+          <div class="ai-sub" id="joel-sub">Claude · Haiku 4.5 · Anthropic</div>
         </div>
       </div>
-      <div class="ai-status">
-        <div class="ai-status-dot ready" id="ai-dot"></div>
-        <span id="ai-status-txt">Listo</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="ai-status">
+          <div class="ai-status-dot ready" id="ai-dot"></div>
+          <span id="ai-status-txt">Listo</span>
+        </div>
+        <button id="joel-expand-btn" onclick="joelToggleFullscreen()" title="Pantalla completa / Volver al dashboard"
+          style="font-family:var(--mono);font-size:9px;background:none;border:1px solid var(--b2);color:var(--t2);padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .2s;border-radius:1px;"
+          onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'"
+          onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">⤢ FULL</button>
       </div>
     </div>
     <!-- TABS -->
@@ -358,15 +371,15 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
     <div id="joel-chat-mode" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
       <!-- API KEY SETUP (shown if no key) -->
       <div id="joel-apikey-bar" style="display:none;padding:8px 10px;background:#0a1810;border-bottom:1px solid var(--b);flex-shrink:0;">
-        <div style="font-size:8px;color:var(--acc);letter-spacing:1px;margin-bottom:4px;">🔑 GROQ API KEY (gratis en console.groq.com)</div>
+        <div style="font-size:8px;color:var(--acc);letter-spacing:1px;margin-bottom:4px;">🔑 ANTHROPIC API KEY (console.anthropic.com)</div>
         <div style="display:flex;gap:6px;">
-          <input id="joel-key-input" type="password" placeholder="gsk_..." 
+          <input id="joel-key-input" type="password" placeholder="sk-ant-..." 
             style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 7px;outline:none;border-radius:1px;"
             onkeydown="if(event.key==='Enter')joelSaveKey()">
           <button onclick="joelSaveKey()" style="background:var(--bg4);border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:8px;padding:4px 10px;cursor:pointer;letter-spacing:1px;">ACTIVAR</button>
           <button onclick="joelClearKey()" title="Cambiar key" style="background:none;border:1px solid var(--b2);color:var(--t3);font-family:var(--mono);font-size:8px;padding:4px 8px;cursor:pointer;">✕</button>
         </div>
-        <div id="joel-key-err" style="font-size:8px;color:var(--red);margin-top:3px;display:none;">Debe empezar con gsk_</div>
+        <div id="joel-key-err" style="font-size:8px;color:var(--red);margin-top:3px;display:none;">Debe empezar con sk-ant-</div>
       </div>
       <!-- QUICK ACTIONS -->
       <div style="padding:5px 8px;border-bottom:1px solid var(--b);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;background:var(--bg3);">
@@ -1391,19 +1404,19 @@ function renderAIResponse(text,sym,dir,entry,sl,tp,rrr){
 // ═══════════════════════════════════════════════════════════════════════════
 let joelHistory=[];
 
-function joelGetKey(){ return localStorage.getItem('joel_groq_key')||''; }
+function joelGetKey(){ return localStorage.getItem('joel_claude_key')||''; }
 function joelSaveKey(){
   const v=document.getElementById('joel-key-input').value.trim();
   const err=document.getElementById('joel-key-err');
-  if(!v.startsWith('gsk_')){ err.style.display='block'; return; }
+  if(!v.startsWith('sk-ant-')){ err.style.display='block'; return; }
   err.style.display='none';
-  localStorage.setItem('joel_groq_key',v);
+  localStorage.setItem('joel_claude_key',v);
   document.getElementById('joel-apikey-bar').style.display='none';
-  document.getElementById('joel-sub').textContent='Groq · Llama 3.3 70B · Activo ✓';
+  document.getElementById('joel-sub').textContent='Claude · Haiku 4.5 · Activo ✓';
   joelWelcome();
 }
 function joelClearKey(){
-  localStorage.removeItem('joel_groq_key');
+  localStorage.removeItem('joel_claude_key');
   document.getElementById('joel-messages').innerHTML='';
   joelHistory=[];
   document.getElementById('joel-apikey-bar').style.display='block';
@@ -1500,17 +1513,27 @@ async function joelSend(){
   ];
 
   try{
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:800,messages:msgs})
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1000,
+        system:'Eres Joel, asesor de trading institucional experto. Responde en español. Sé directo y concreto. Analiza siempre retail vs institucional. Identifica confluencias y señales de trampa retail.',
+        messages:msgs
+      })
     });
     if(!r.ok){
-      if(r.status===401){ joelClearKey(); joelAddMsg('joel','<span style="color:var(--red)">API Key inválida.</span> Ingresa una nueva key de console.groq.com'); }
+      if(r.status===401){ joelClearKey(); joelAddMsg('joel','<span style="color:var(--red)">API Key inválida.</span> Ingresa tu key de console.anthropic.com'); }
       else joelAddMsg('joel','<span style="color:var(--red)">Error de conexión.</span> Intenta de nuevo.');
     } else {
       const data=await r.json();
-      const reply=data.choices?.[0]?.message?.content||'Sin respuesta.';
+      const reply=data.content?.[0]?.text||'Sin respuesta.';
       joelHistory.push({role:'user',content:msg});
       joelHistory.push({role:'assistant',content:reply});
       if(joelHistory.length>16) joelHistory=joelHistory.slice(-16);
@@ -1543,7 +1566,7 @@ function joelWelcome(){
   if(!key){
     document.getElementById('joel-apikey-bar').style.display='block';
   } else {
-    document.getElementById('joel-sub').textContent='Groq · Llama 3.3 70B · Activo ✓';
+    document.getElementById('joel-sub').textContent='Claude · Haiku 4.5 · Activo ✓';
     joelWelcome();
   }
 })();
@@ -1599,23 +1622,30 @@ Responde EXACTAMENTE con estas etiquetas:
   if(!key){
     document.getElementById('joel-apikey-bar').style.display='block';
     joelTab('chat');
-    resp.innerHTML=`<div style="padding:10px;font-size:10px;color:var(--warn);">Configura primero la API Key de Groq en la pestaña Chat.</div>`;
+    resp.innerHTML=`<div style="padding:10px;font-size:10px;color:var(--warn);">Configura primero la API Key de Claude en la pestaña Chat.</div>`;
     btn.disabled=false; dot.className='ai-status-dot ready';
     document.getElementById('ai-status-txt').textContent='Listo';
     return;
   }
 
   try{
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',max_tokens:1000,
-        messages:[{role:'system',content:'Eres Joel, asesor de trading institucional experto. Responde en español. Sé directo y brutal. Usa exactamente el formato de etiquetas solicitado.'},{role:'user',content:prompt}]
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1000,
+        system:'Eres Joel, asesor de trading institucional experto. Responde en español. Sé directo y brutal. Usa exactamente el formato de etiquetas solicitado.',
+        messages:[{role:'user',content:prompt}]
       })
     });
     const data=await r.json();
-    const text=data.choices?.[0]?.message?.content||'';
+    const text=data.content?.[0]?.text||'';
     renderAIResponse(text,sym,dir,entry,sl,tp,rrr);
   } catch(e){
     resp.innerHTML=`<div style="padding:10px;font-size:10px;color:var(--red);">Error de conexión. Verifica tu API Key en la pestaña Chat.</div>`;
@@ -1624,6 +1654,31 @@ Responde EXACTAMENTE con estas etiquetas:
   dot.className='ai-status-dot ready';
   document.getElementById('ai-status-txt').textContent='Listo';
 }
+// ── JOEL FULLSCREEN ──────────────────────────────────────────────────────────
+let joelFS = false;
+function joelToggleFullscreen(){
+  const panel = document.getElementById('joel-panel');
+  const btn = document.getElementById('joel-expand-btn');
+  const grid = document.querySelector('.grid');
+  joelFS = !joelFS;
+  if(joelFS){
+    panel.classList.add('joel-fs');
+    btn.textContent = '⤡ DASHBOARD';
+    btn.title = 'Volver al dashboard';
+    // Hide topbar and ticker for max space
+    document.querySelector('.topbar').classList.add('joel-fs-hide');
+    document.querySelector('.ticker').classList.add('joel-fs-hide');
+  } else {
+    panel.classList.remove('joel-fs');
+    btn.textContent = '⤢ FULL';
+    btn.title = 'Pantalla completa';
+    document.querySelector('.topbar').classList.remove('joel-fs-hide');
+    document.querySelector('.ticker').classList.remove('joel-fs-hide');
+  }
+}
+// ESC to exit fullscreen
+document.addEventListener('keydown', e => { if(e.key==='Escape' && joelFS) joelToggleFullscreen(); });
+
 fetchPrices();
 setInterval(fetchPrices,5*60*1000);
 // COT data: fetch on load + refresh every 4h (CFTC updates Fridays)
