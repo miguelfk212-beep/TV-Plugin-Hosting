@@ -15,7 +15,7 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:11px;overflow-x:hidden;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;overflow-x:hidden;}
 body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.03) 3px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9998;}
 
 /* TOPBAR */
@@ -27,25 +27,25 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 }
 .joel-fs-hide{display:none!important;}
 .topbar{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--b);padding:0 14px;height:34px;position:sticky;top:0;z-index:200;}
-.logo{font-size:12px;font-weight:600;letter-spacing:4px;color:var(--acc);}
+.logo{font-size:14px;font-weight:600;letter-spacing:4px;color:var(--acc);}
 .logo em{color:var(--t3);font-style:normal;}
 .pulse{width:5px;height:5px;border-radius:50%;background:var(--acc);animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.clocks{display:flex;gap:14px;font-size:9px;color:var(--t2);}
+.clocks{display:flex;gap:14px;font-size:13px;color:var(--t2);}
 .clocks span b{color:var(--text);font-weight:400;}
 .sess-strip{display:flex;gap:3px;}
-.sb{font-size:8px;font-weight:500;letter-spacing:1.5px;padding:2px 6px;border-radius:1px;}
+.sb{font-size:13px;font-weight:500;letter-spacing:1.5px;padding:2px 6px;border-radius:1px;}
 .sb.on{background:#082a1a;color:var(--green);border:1px solid #10402a;}
 .sb.ov{background:#2a1e06;color:var(--warn);border:1px solid #3e2c08;}
 .sb.off{background:#0c1216;color:var(--t3);border:1px solid var(--b);}
-.rbtn{font-family:var(--mono);font-size:9px;background:none;border:1px solid var(--b2);color:var(--t2);padding:3px 10px;cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.rbtn{font-family:var(--mono);font-size:13px;background:none;border:1px solid var(--b2);color:var(--t2);padding:3px 10px;cursor:pointer;letter-spacing:1px;transition:all .2s;}
 .rbtn:hover{border-color:var(--acc);color:var(--acc);}
 
 /* TICKER */
 .ticker{height:20px;background:var(--bg2);border-bottom:1px solid var(--b);overflow:hidden;display:flex;align-items:center;}
 .ticker-inner{display:flex;gap:0;animation:crawl 70s linear infinite;white-space:nowrap;}
 @keyframes crawl{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ti{padding:0 16px;font-size:9px;border-right:1px solid var(--b);}
+.ti{padding:0 16px;font-size:13px;border-right:1px solid var(--b);}
 .ti .sym{color:var(--t2);}
 .up{color:var(--green)!important;}.dn{color:var(--red)!important;}.neu{color:var(--t2)!important;}
 
@@ -58,18 +58,18 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 
 /* PANEL HEADER */
 .ph{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--bg3);border-bottom:1px solid var(--b);}
-.ph-t{font-size:8px;font-weight:500;letter-spacing:2px;color:var(--t2);text-transform:uppercase;}
-.ph-r{font-size:8px;color:var(--t3);}
+.ph-t{font-size:13px;font-weight:500;letter-spacing:2px;color:var(--t2);text-transform:uppercase;}
+.ph-r{font-size:13px;color:var(--t3);}
 .ph-r.live{color:var(--acc);}
 
 /* WATCHLIST */
 .wl-hdr{display:grid;grid-template-columns:70px 34px 60px 44px 10px;padding:3px 10px;border-bottom:1px solid var(--b);background:var(--bg3);}
-.wl-hdr span{font-size:7px;color:var(--t3);letter-spacing:1px;text-align:right;}
+.wl-hdr span{font-size:13px;color:var(--t3);letter-spacing:1px;text-align:right;}
 .wl-hdr span:first-child{text-align:left;}
 .wl-row{display:grid;grid-template-columns:70px 34px 60px 44px 10px;padding:5px 10px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .1s;align-items:center;}
 .wl-row:hover{background:var(--bg4);}
-.wl-sym{font-size:10px;font-weight:500;}
-.wl-cat{font-size:7px;color:var(--t3);}
+.wl-sym{font-size:13px;font-weight:500;}
+.wl-cat{font-size:13px;color:var(--t3);}
 .spark{display:flex;align-items:flex-end;gap:1px;height:14px;}
 .spark span{width:2px;border-radius:1px;}
 .wl-dot{width:5px;height:5px;border-radius:50%;margin-left:auto;}
@@ -78,13 +78,13 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 .sent-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);}
 .sc{background:var(--bg2);padding:8px 10px;}
 .sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-.sc-sym{font-size:10px;font-weight:500;letter-spacing:1px;}
-.sc-chg{font-size:9px;}
+.sc-sym{font-size:13px;font-weight:500;letter-spacing:1px;}
+.sc-chg{font-size:13px;}
 .sc-bar{height:10px;background:var(--bg4);border-radius:1px;position:relative;overflow:hidden;margin-bottom:4px;}
 .sc-long{position:absolute;left:0;top:0;height:100%;}
 .sc-mid{position:absolute;left:50%;top:-1px;width:1px;height:12px;background:var(--b3);}
-.sc-pcts{display:flex;justify-content:space-between;font-size:8px;margin-bottom:5px;}
-.sc-sig{font-size:8px;font-weight:500;letter-spacing:1px;padding:2px 6px;border-radius:1px;display:inline-block;}
+.sc-pcts{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
+.sc-sig{font-size:13px;font-weight:500;letter-spacing:1px;padding:2px 6px;border-radius:1px;display:inline-block;}
 .sig-sell{background:#200808;color:var(--red);border:1px solid #400c0c;}
 .sig-buy{background:#082010;color:var(--green);border:1px solid #0c4020;}
 .sig-watch{background:#1e1606;color:var(--warn);border:1px solid #3c2a08;}
@@ -99,45 +99,45 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 .cot-row{display:grid;grid-template-columns:56px 1fr 52px 48px 54px;align-items:center;padding:4px 10px;border-bottom:1px solid var(--b);gap:4px;}
 .cot-bw{height:6px;background:var(--bg4);border-radius:1px;position:relative;overflow:hidden;}
 .cot-nf{position:absolute;top:0;height:100%;}
-.cot-sym{font-size:9px;font-weight:500;}
-.cot-val{font-size:8px;text-align:right;}
-.cot-bias{font-size:8px;font-weight:500;text-align:right;letter-spacing:1px;}
+.cot-sym{font-size:13px;font-weight:500;}
+.cot-val{font-size:13px;text-align:right;}
+.cot-bias{font-size:13px;font-weight:500;text-align:right;letter-spacing:1px;}
 
 /* LIQUIDITY MAP */
 .liq-row{display:flex;align-items:center;gap:4px;padding:2px 10px;}
-.liq-sym{font-size:8px;color:var(--t2);width:50px;flex-shrink:0;}
+.liq-sym{font-size:13px;color:var(--t2);width:50px;flex-shrink:0;}
 .liq-cells{display:flex;gap:1px;flex:1;}
-.liq-cell{flex:1;height:16px;border-radius:1px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500;}
+.liq-cell{flex:1;height:16px;border-radius:1px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;}
 
 /* CORRELATION */
 .corr-tbl{border-collapse:collapse;width:100%;}
-.corr-tbl th{font-size:7px;color:var(--t3);padding:2px 3px;text-align:center;}
-.corr-tbl td{width:26px;height:18px;text-align:center;font-size:7px;font-weight:500;border:1px solid var(--bg);}
-.corr-lbl{font-size:7px;color:var(--t2);padding-right:5px;text-align:right;white-space:nowrap;}
+.corr-tbl th{font-size:13px;color:var(--t3);padding:2px 3px;text-align:center;}
+.corr-tbl td{width:26px;height:18px;text-align:center;font-size:13px;font-weight:500;border:1px solid var(--bg);}
+.corr-lbl{font-size:13px;color:var(--t2);padding-right:5px;text-align:right;white-space:nowrap;}
 
 /* CALENDAR */
 .cal-row{display:grid;grid-template-columns:40px 28px 1fr 22px 46px 44px;align-items:center;padding:4px 10px;border-bottom:1px solid var(--b);gap:3px;transition:background .1s;}
 .cal-row:hover{background:var(--bg4);}
 .cal-row.hi{border-left:2px solid var(--red);}
 .cal-row.med{border-left:2px solid var(--warn);}
-.cal-t{font-size:8px;color:var(--t2);}
-.cal-cc{font-size:8px;font-weight:500;letter-spacing:1px;}
-.cal-ev{font-size:9px;font-family:var(--sans);color:var(--text);}
+.cal-t{font-size:13px;color:var(--t2);}
+.cal-cc{font-size:13px;font-weight:500;letter-spacing:1px;}
+.cal-ev{font-size:13px;font-family:var(--sans);color:var(--text);}
 .cal-imp{display:flex;gap:1px;}
 .cal-imp span{width:4px;height:4px;border-radius:1px;background:var(--b3);}
 .cal-imp span.f{background:var(--warn);}
 .cal-imp span.fh{background:var(--red);}
-.cal-act{font-size:8px;text-align:right;}
-.cal-prev{font-size:7px;color:var(--t2);text-align:right;}
+.cal-act{font-size:13px;text-align:right;}
+.cal-prev{font-size:13px;color:var(--t2);text-align:right;}
 
 /* NEWS */
 .ni{padding:6px 10px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .1s;}
 .ni:hover{background:var(--bg4);}
 .ni-top{display:flex;gap:6px;align-items:center;margin-bottom:2px;}
-.ni-src{font-size:7px;font-weight:500;letter-spacing:1.5px;color:var(--acc2);text-transform:uppercase;}
-.ni-time{font-size:7px;color:var(--t3);}
-.ni-tag{font-size:7px;padding:1px 4px;background:var(--bg4);color:var(--warn);border-radius:1px;}
-.ni-title{font-size:10px;color:var(--text);line-height:1.4;font-family:var(--sans);}
+.ni-src{font-size:13px;font-weight:500;letter-spacing:1.5px;color:var(--acc2);text-transform:uppercase;}
+.ni-time{font-size:13px;color:var(--t3);}
+.ni-tag{font-size:13px;padding:1px 4px;background:var(--bg4);color:var(--warn);border-radius:1px;}
+.ni-title{font-size:13px;color:var(--text);line-height:1.4;font-family:var(--sans);}
 .ni-dot{width:4px;height:4px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle;}
 .ni-dot.h{background:var(--red);}
 .ni-dot.m{background:var(--warn);}
@@ -145,19 +145,19 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 
 /* SESSION MAP */
 .sess-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;padding:0 10px;}
-.sess-name{font-size:8px;color:var(--t2);width:42px;flex-shrink:0;}
+.sess-name{font-size:13px;color:var(--t2);width:42px;flex-shrink:0;}
 .sess-bar{flex:1;height:9px;background:var(--bg4);border-radius:1px;position:relative;overflow:visible;}
 .sess-fill{position:absolute;top:0;height:100%;border-radius:1px;opacity:.6;}
 .sess-now{position:absolute;top:-3px;width:2px;height:15px;background:var(--acc);border-radius:1px;z-index:2;}
-.sess-utc{font-size:7px;color:var(--t3);width:60px;text-align:right;flex-shrink:0;}
+.sess-utc{font-size:13px;color:var(--t3);width:60px;text-align:right;flex-shrink:0;}
 
 /* MACRO */
 .mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);}
 .mc{background:var(--bg2);padding:6px 10px;}
-.mc-l{font-size:7px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.mc-l{font-size:13px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
 .mc-v{font-size:13px;font-weight:500;color:var(--text);line-height:1;}
-.mc-d{font-size:8px;margin-top:1px;}
-.mc-s{font-size:7px;color:var(--t3);}
+.mc-d{font-size:13px;margin-top:1px;}
+.mc-s{font-size:13px;color:var(--t3);}
 
 /* ═══════════════════════════════════════════════════
    AI ADVISOR PANEL — MAIN FEATURE
@@ -172,11 +172,11 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
   width:24px;height:24px;border-radius:4px;
   background:linear-gradient(135deg,#004428,#002a1a);
   border:1px solid var(--acc);display:flex;align-items:center;justify-content:center;
-  font-size:12px;color:var(--acc);font-weight:600;font-family:var(--mono);
+  font-size:13px;color:var(--acc);font-weight:600;font-family:var(--mono);
 }
-.ai-title{font-size:11px;font-weight:500;letter-spacing:2px;color:var(--acc);}
-.ai-sub{font-size:8px;color:var(--t2);margin-top:1px;}
-.ai-status{font-size:8px;color:var(--t3);display:flex;align-items:center;gap:5px;}
+.ai-title{font-size:13px;font-weight:500;letter-spacing:2px;color:var(--acc);}
+.ai-sub{font-size:13px;color:var(--t2);margin-top:1px;}
+.ai-status{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:5px;}
 .ai-status-dot{width:4px;height:4px;border-radius:50%;background:var(--t3);}
 .ai-status-dot.thinking{background:var(--warn);animation:blink .8s infinite;}
 .ai-status-dot.ready{background:var(--acc);}
@@ -185,25 +185,25 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 .ai-form{padding:10px 14px;border-bottom:1px solid var(--b);background:var(--bg3);}
 .ai-form-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px;}
 .ai-form-group{display:flex;flex-direction:column;gap:3px;}
-.ai-label{font-size:7px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;}
+.ai-label{font-size:13px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;}
 .ai-select,.ai-input{
   background:var(--bg4);border:1px solid var(--b2);color:var(--text);
-  font-family:var(--mono);font-size:10px;padding:5px 7px;outline:none;border-radius:1px;
+  font-family:var(--mono);font-size:13px;padding:5px 7px;outline:none;border-radius:1px;
   transition:border-color .2s;
 }
 .ai-select:focus,.ai-input:focus{border-color:var(--acc2);}
 .ai-select option{background:var(--bg4);}
 .ai-textarea{
   width:100%;background:var(--bg4);border:1px solid var(--b2);color:var(--text);
-  font-family:var(--sans);font-size:10px;padding:7px;outline:none;border-radius:1px;
+  font-family:var(--sans);font-size:13px;padding:7px;outline:none;border-radius:1px;
   resize:none;height:52px;line-height:1.5;transition:border-color .2s;
 }
 .ai-textarea:focus{border-color:var(--acc2);}
 .ai-form-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
-.ai-hint{font-size:8px;color:var(--t3);}
+.ai-hint{font-size:13px;color:var(--t3);}
 .ai-ask-btn{
   background:var(--bg4);border:1px solid var(--acc);color:var(--acc);
-  font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:2px;
+  font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:2px;
   padding:6px 16px;cursor:pointer;transition:all .2s;border-radius:1px;
 }
 .ai-ask-btn:hover{background:#001a10;color:var(--acc);}
@@ -213,20 +213,20 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 .ai-response{padding:12px 14px;min-height:180px;max-height:360px;overflow-y:auto;}
 .ai-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px;color:var(--t3);}
 .ai-empty-icon{font-size:28px;opacity:.3;}
-.ai-empty-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;}
+.ai-empty-text{font-size:13px;letter-spacing:2px;text-transform:uppercase;}
 .ai-thinking{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg3);border-radius:2px;border:1px solid var(--b2);}
 .ai-thinking-dots{display:flex;gap:4px;}
 .ai-thinking-dots span{width:5px;height:5px;border-radius:50%;background:var(--acc);animation:tdot 1.2s infinite;}
 .ai-thinking-dots span:nth-child(2){animation-delay:.2s;}
 .ai-thinking-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes tdot{0%,60%,100%{opacity:.2;transform:scale(.8)}30%{opacity:1;transform:scale(1)}}
-.ai-thinking-text{font-size:9px;color:var(--t2);letter-spacing:1px;}
+.ai-thinking-text{font-size:13px;color:var(--t2);letter-spacing:1px;}
 
 /* AI VERDICT CARD */
 .ai-verdict{border-radius:2px;overflow:hidden;margin-bottom:10px;}
 .av-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;}
-.av-verdict{font-size:13px;font-weight:600;letter-spacing:3px;}
-.av-score{font-size:10px;font-weight:500;}
+.av-verdict{font-size:14px;font-weight:600;letter-spacing:3px;}
+.av-score{font-size:13px;font-weight:500;}
 .av-header.buy{background:#081a10;border:1px solid #104028;}
 .av-header.sell{background:#1a0808;border:1px solid #402010;}
 .av-header.wait{background:#1a1406;border:1px solid #40300a;}
@@ -237,50 +237,50 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 .av-header.avoid .av-verdict{color:var(--t2);}
 .av-body{background:var(--bg3);border:1px solid var(--b);border-top:none;padding:10px 12px;}
 .av-section{margin-bottom:8px;}
-.av-section-title{font-size:7px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-.av-text{font-size:10px;color:var(--text);line-height:1.6;font-family:var(--sans);}
+.av-section-title{font-size:13px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.av-text{font-size:13px;color:var(--text);line-height:1.6;font-family:var(--sans);}
 .av-factors{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
-.av-factor{display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--text);line-height:1.4;}
+.av-factor{display:flex;align-items:flex-start;gap:6px;font-size:13px;color:var(--text);line-height:1.4;}
 .av-factor-dot{width:4px;height:4px;border-radius:50%;margin-top:4px;flex-shrink:0;}
 .av-factor-dot.pos{background:var(--green);}
 .av-factor-dot.neg{background:var(--red);}
 .av-factor-dot.neu{background:var(--warn);}
 .av-levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}
 .av-level{background:var(--bg4);padding:5px 8px;border-radius:1px;text-align:center;}
-.av-level-l{font-size:7px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;}
-.av-level-v{font-size:11px;font-weight:500;margin-top:1px;}
-.av-disclaimer{font-size:7px;color:var(--t3);border-top:1px solid var(--b);padding-top:6px;margin-top:8px;line-height:1.4;}
+.av-level-l{font-size:13px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;}
+.av-level-v{font-size:13px;font-weight:500;margin-top:1px;}
+.av-disclaimer{font-size:13px;color:var(--t3);border-top:1px solid var(--b);padding-top:6px;margin-top:8px;line-height:1.4;}
 
 /* OANDA LINKS */
 .oanda-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);padding:0;}
 .oanda-cell{background:var(--bg2);padding:7px 10px;cursor:pointer;transition:background .1s;}
 .oanda-cell:hover{background:var(--bg4);}
-.oa-sym{font-size:9px;font-weight:500;letter-spacing:1px;margin-bottom:2px;}
-.oa-desc{font-size:8px;color:var(--t3);}
+.oa-sym{font-size:13px;font-weight:500;letter-spacing:1px;margin-bottom:2px;}
+.oa-desc{font-size:13px;color:var(--t3);}
 .oa-links{display:flex;gap:8px;margin-top:4px;}
-.oa-link{font-size:7px;color:var(--acc2);text-decoration:none;letter-spacing:1px;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;transition:all .15s;}
+.oa-link{font-size:13px;color:var(--acc2);text-decoration:none;letter-spacing:1px;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;transition:all .15s;}
 .oa-link:hover{border-color:var(--acc2);color:var(--acc);}
 
 /* NOTES */
-.notes-ta{width:100%;height:80px;background:var(--bg3);border:1px solid var(--b);color:var(--text);font-family:var(--mono);font-size:10px;padding:6px;resize:none;outline:none;border-radius:1px;line-height:1.5;}
+.notes-ta{width:100%;height:80px;background:var(--bg3);border:1px solid var(--b);color:var(--text);font-family:var(--mono);font-size:13px;padding:6px;resize:none;outline:none;border-radius:1px;line-height:1.5;}
 .notes-ta:focus{border-color:var(--b2);}
 
 /* TABS */
 .tabs{display:flex;background:var(--bg3);border-bottom:1px solid var(--b);}
-.tab{padding:4px 12px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .15s;}
+.tab{padding:4px 12px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .15s;}
 .tab.on{color:var(--acc);border-bottom-color:var(--acc);}
 .tc{display:none;}
 .tc.on{display:block;}
 
 /* JOEL CHAT */
-.qb{font-size:7px;font-family:var(--mono);background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:2px 7px;cursor:pointer;border-radius:1px;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+.qb{font-size:13px;font-family:var(--mono);background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:2px 7px;cursor:pointer;border-radius:1px;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
 .qb:hover{border-color:var(--acc);color:var(--acc);}
 .jmsg{display:flex;gap:7px;max-width:100%;}
 .jmsg.user{flex-direction:row-reverse;}
-.jav{width:20px;height:20px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;}
+.jav{width:20px;height:20px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
 .jmsg.joel .jav{background:linear-gradient(135deg,#002a18,#001810);border:1px solid var(--acc);color:var(--acc);}
 .jmsg.user .jav{background:var(--bg3);border:1px solid var(--b2);color:var(--t2);}
-.jbub{border-radius:2px;padding:7px 9px;font-size:10px;line-height:1.6;font-family:var(--sans);color:var(--text);}
+.jbub{border-radius:2px;padding:7px 9px;font-size:13px;line-height:1.6;font-family:var(--sans);color:var(--text);}
 .jmsg.joel .jbub{background:var(--bg3);border:1px solid var(--b);border-top-left-radius:0;}
 .jmsg.user .jbub{background:var(--bg4);border:1px solid var(--b2);border-top-right-radius:0;}
 .jbub b{color:var(--acc);}
@@ -300,7 +300,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 <!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
-    <div style="display:flex;align-items:center;gap:7px;"><div class="pulse"></div><span class="logo">MKT<em>///</em>TERMINAL <em style="font-size:9px;letter-spacing:2px">v3 · AI ADVISOR</em></span></div>
+    <div style="display:flex;align-items:center;gap:7px;"><div class="pulse"></div><span class="logo">MKT<em>///</em>TERMINAL <em style="font-size:13px;letter-spacing:2px">v3 · AI ADVISOR</em></span></div>
     <div class="sess-strip" id="sess-badges"></div>
   </div>
   <div style="display:flex;align-items:center;gap:14px;">
@@ -335,7 +335,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
   <div class="p wide">
     <div class="ph"><span class="ph-t">🔴 Retail Sentiment Agregado — 5 fuentes</span><span class="ph-r">Ver panel completo abajo ↓</span></div>
     <div id="sent-panel" style="padding:6px 10px;display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
-      <span style="font-size:8px;color:var(--t3);">Cargando datos de sentimiento...</span>
+      <span style="font-size:13px;color:var(--t3);">Cargando datos de sentimiento...</span>
     </div>
   </div>
 
@@ -344,7 +344,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
     <!-- HEADER -->
     <div class="ai-header" style="flex-shrink:0;">
       <div class="ai-logo">
-        <div class="ai-icon" style="font-size:11px;font-weight:700;">J</div>
+        <div class="ai-icon" style="font-size:13px;font-weight:700;">J</div>
         <div>
           <div class="ai-title">JOEL · AI ADVISOR</div>
           <div class="ai-sub" id="joel-sub">Claude · Haiku 4.5 · Anthropic</div>
@@ -356,7 +356,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
           <span id="ai-status-txt">Listo</span>
         </div>
         <button id="joel-expand-btn" onclick="joelToggleFullscreen()" title="Pantalla completa / Volver al dashboard"
-          style="font-family:var(--mono);font-size:9px;background:none;border:1px solid var(--b2);color:var(--t2);padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .2s;border-radius:1px;"
+          style="font-family:var(--mono);font-size:13px;background:none;border:1px solid var(--b2);color:var(--t2);padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .2s;border-radius:1px;"
           onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'"
           onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">⤢ FULL</button>
       </div>
@@ -371,15 +371,15 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
     <div id="joel-chat-mode" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
       <!-- API KEY SETUP (shown if no key) -->
       <div id="joel-apikey-bar" style="display:none;padding:8px 10px;background:#0a1810;border-bottom:1px solid var(--b);flex-shrink:0;">
-        <div style="font-size:8px;color:var(--acc);letter-spacing:1px;margin-bottom:4px;">🔑 ANTHROPIC API KEY (console.anthropic.com)</div>
+        <div style="font-size:13px;color:var(--acc);letter-spacing:1px;margin-bottom:4px;">🔑 ANTHROPIC API KEY (console.anthropic.com)</div>
         <div style="display:flex;gap:6px;">
           <input id="joel-key-input" type="password" placeholder="sk-ant-..." 
-            style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 7px;outline:none;border-radius:1px;"
+            style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--text);font-family:var(--mono);font-size:13px;padding:4px 7px;outline:none;border-radius:1px;"
             onkeydown="if(event.key==='Enter')joelSaveKey()">
-          <button onclick="joelSaveKey()" style="background:var(--bg4);border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:8px;padding:4px 10px;cursor:pointer;letter-spacing:1px;">ACTIVAR</button>
-          <button onclick="joelClearKey()" title="Cambiar key" style="background:none;border:1px solid var(--b2);color:var(--t3);font-family:var(--mono);font-size:8px;padding:4px 8px;cursor:pointer;">✕</button>
+          <button onclick="joelSaveKey()" style="background:var(--bg4);border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:13px;padding:4px 10px;cursor:pointer;letter-spacing:1px;">ACTIVAR</button>
+          <button onclick="joelClearKey()" title="Cambiar key" style="background:none;border:1px solid var(--b2);color:var(--t3);font-family:var(--mono);font-size:13px;padding:4px 8px;cursor:pointer;">✕</button>
         </div>
-        <div id="joel-key-err" style="font-size:8px;color:var(--red);margin-top:3px;display:none;">Debe empezar con sk-ant-</div>
+        <div id="joel-key-err" style="font-size:13px;color:var(--red);margin-top:3px;display:none;">Debe empezar con sk-ant-</div>
       </div>
       <!-- QUICK ACTIONS -->
       <div style="padding:5px 8px;border-bottom:1px solid var(--b);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;background:var(--bg3);">
@@ -394,12 +394,12 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
       <div style="padding:7px 8px;border-top:1px solid var(--b);background:var(--bg3);flex-shrink:0;">
         <div style="display:flex;gap:6px;align-items:flex-end;">
           <textarea id="joel-input" 
-            style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--text);font-family:var(--sans);font-size:10px;padding:6px 8px;outline:none;border-radius:1px;resize:none;height:36px;line-height:1.4;transition:border-color .2s;"
+            style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--text);font-family:var(--sans);font-size:13px;padding:6px 8px;outline:none;border-radius:1px;resize:none;height:36px;line-height:1.4;transition:border-color .2s;"
             placeholder="Pregúntale a Joel... (Enter envía)"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();joelSend();}"
             onfocus="this.style.borderColor='var(--acc2)'" onblur="this.style.borderColor='var(--b2)'"></textarea>
           <button id="joel-send-btn" onclick="joelSend()" 
-            style="background:linear-gradient(135deg,#002a18,#001810);border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:1px;padding:6px 10px;cursor:pointer;border-radius:1px;height:36px;white-space:nowrap;">
+            style="background:linear-gradient(135deg,#002a18,#001810);border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:1px;padding:6px 10px;cursor:pointer;border-radius:1px;height:36px;white-space:nowrap;">
             ▶ ENVIAR
           </button>
         </div>
@@ -474,26 +474,26 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
     <!-- ══ RETAIL AGREGADO ══ -->
     <div id="panel-retail" class="tc on">
       <div style="padding:5px 10px;background:var(--bg3);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:7px;color:var(--t3);letter-spacing:1.5px;">FUENTES: MYFXBOOK · FXBLUE · FXSSI · OANDA · DUKASCOPY — PROMEDIO PONDERADO</span>
-        <span id="retail-upd" style="font-size:7px;color:var(--t3);">—</span>
+        <span style="font-size:13px;color:var(--t3);letter-spacing:1.5px;">FUENTES: MYFXBOOK · FXBLUE · FXSSI · OANDA · DUKASCOPY — PROMEDIO PONDERADO</span>
+        <span id="retail-upd" style="font-size:13px;color:var(--t3);">—</span>
       </div>
       <div id="retail-panel"></div>
       <!-- Sources strip -->
       <div style="padding:5px 10px;border-top:1px solid var(--b);display:flex;gap:6px;flex-wrap:wrap;background:var(--bg3);">
-        <a href="https://www.myfxbook.com/community/outlook" target="_blank" style="font-size:7px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">MYFXBOOK ↗</a>
-        <a href="https://www.fxblue.com/market-data/tools/sentiment" target="_blank" style="font-size:7px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">FXBLUE ↗</a>
-        <a href="https://fxssi.com/tools/current-ratio" target="_blank" style="font-size:7px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">FXSSI ↗</a>
-        <a href="https://www.oanda.com/bvi-en/lab-education/tools/order-book-position-book-tool/" target="_blank" style="font-size:7px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">OANDA ↗</a>
-        <a href="https://www.dukascopy.com/swiss/english/marketwatch/sentiment/" target="_blank" style="font-size:7px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">DUKASCOPY ↗</a>
-        <span style="font-size:7px;color:var(--t3);margin-left:auto;">Contra-señal: retail extremo → institucional opuesto</span>
+        <a href="https://www.myfxbook.com/community/outlook" target="_blank" style="font-size:13px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">MYFXBOOK ↗</a>
+        <a href="https://www.fxblue.com/market-data/tools/sentiment" target="_blank" style="font-size:13px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">FXBLUE ↗</a>
+        <a href="https://fxssi.com/tools/current-ratio" target="_blank" style="font-size:13px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">FXSSI ↗</a>
+        <a href="https://www.oanda.com/bvi-en/lab-education/tools/order-book-position-book-tool/" target="_blank" style="font-size:13px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">OANDA ↗</a>
+        <a href="https://www.dukascopy.com/swiss/english/marketwatch/sentiment/" target="_blank" style="font-size:13px;color:var(--acc2);text-decoration:none;border:1px solid var(--b2);padding:1px 5px;border-radius:1px;">DUKASCOPY ↗</a>
+        <span style="font-size:13px;color:var(--t3);margin-left:auto;">Contra-señal: retail extremo → institucional opuesto</span>
       </div>
     </div>
 
     <!-- ══ INSTITUCIONAL AGREGADO ══ -->
     <div id="panel-inst" class="tc">
       <div style="padding:5px 10px;background:var(--bg3);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:7px;color:var(--t3);letter-spacing:1.5px;">FUENTES: CFTC COT REAL (Leveraged+Asset Mgr+Commercial) · Actualiza viernes 15:30 ET</span>
-        <span id="cot-upd" style="font-size:7px;color:var(--t3);">—</span>
+        <span style="font-size:13px;color:var(--t3);letter-spacing:1.5px;">FUENTES: CFTC COT REAL (Leveraged+Asset Mgr+Commercial) · Actualiza viernes 15:30 ET</span>
+        <span id="cot-upd" style="font-size:13px;color:var(--t3);">—</span>
       </div>
       <!-- COT AGREGADO por instrumento -->
       <div id="inst-panel"></div>
@@ -508,7 +508,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
         <div id="cot-asset" class="tc" style="max-height:160px;overflow-y:auto;"></div>
         <div id="cot-comm" class="tc" style="max-height:160px;overflow-y:auto;"></div>
       </div>
-      <div style="padding:4px 10px;background:var(--bg3);font-size:7px;color:var(--t3);">
+      <div style="padding:4px 10px;background:var(--bg3);font-size:13px;color:var(--t3);">
         <a href="https://publicreporting.cftc.gov/stories/s/Traders-in-Financial-Futures" target="_blank" style="color:var(--acc2);text-decoration:none;">CFTC TFF Report ↗</a>
         &nbsp;·&nbsp; Leveraged = Hedge Funds &nbsp;·&nbsp; Asset Mgr = Fondos pensión/ETF &nbsp;·&nbsp; Commercial = Dealers/Bancos
       </div>
@@ -768,17 +768,17 @@ function renderRetailPanel() {
       <div class="sc-top">
         <span class="sc-sym" style="color:${inst.color}">${inst.sym}</span>
         <span class="sc-chg ${chgCls}">${chgStr}</span>
-        <div class="${sig.cls}" style="font-size:7px;font-weight:500;letter-spacing:1px;padding:1px 5px;border-radius:1px;">${sig.label}</div>
+        <div class="${sig.cls}" style="font-size:13px;font-weight:500;letter-spacing:1px;padding:1px 5px;border-radius:1px;">${sig.label}</div>
       </div>
       <!-- MAIN AGGREGATED BAR -->
       <div style="display:flex;align-items:center;gap:5px;margin:5px 0 3px;">
-        <span style="font-size:8px;color:var(--red);width:28px;">L ${agg.long}%</span>
+        <span style="font-size:13px;color:var(--red);width:28px;">L ${agg.long}%</span>
         <div style="flex:1;height:8px;background:var(--bg4);border-radius:2px;position:relative;overflow:hidden;">
           <div style="position:absolute;left:0;top:0;height:100%;width:${agg.long}%;background:${agg.long>=65?'rgba(240,56,56,.55)':agg.long<=35?'rgba(24,208,96,.45)':'rgba(80,120,180,.35)'};transition:width .5s;"></div>
           <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--b3)"></div>
         </div>
-        <span style="font-size:8px;color:var(--green);width:28px;text-align:right;">S ${agg.short}%</span>
-        <span style="font-size:8px;font-weight:600;color:${scoreColor};width:36px;text-align:right;">E:${agg.score}</span>
+        <span style="font-size:13px;color:var(--green);width:28px;text-align:right;">S ${agg.short}%</span>
+        <span style="font-size:14px;font-weight:600;color:${scoreColor};width:36px;text-align:right;">E:${agg.score}</span>
       </div>
       <!-- PER-SOURCE BREAKDOWN -->
       <div style="margin-top:4px;padding:4px 6px;background:var(--bg3);border-radius:1px;">${srcBars}</div>
@@ -792,9 +792,9 @@ function renderRetailPanel() {
     const sig = retailSig(agg.long);
     const col = agg.long>=65?'var(--red)':agg.long<=35?'var(--green)':'var(--t2)';
     return `<div style="background:var(--bg3);border:1px solid var(--b);padding:2px 6px;border-radius:1px;white-space:nowrap;">
-      <span style="font-size:8px;font-weight:500;color:${inst.color}">${inst.sym}</span>
-      <span style="font-size:8px;color:${col};margin-left:4px;">${agg.long}%L</span>
-      <span style="font-size:7px;color:${col};margin-left:3px;opacity:.8;">${agg.score>50?'⚡':''}</span>
+      <span style="font-size:13px;font-weight:500;color:${inst.color}">${inst.sym}</span>
+      <span style="font-size:13px;color:${col};margin-left:4px;">${agg.long}%L</span>
+      <span style="font-size:13px;color:${col};margin-left:3px;opacity:.8;">${agg.score>50?'⚡':''}</span>
     </div>`;
   }).join('');
   const sp = document.getElementById('sent-panel');
@@ -946,7 +946,7 @@ function useCOTFallback() {
 function renderInstPanel() {
   const cells = INST.map(inst => {
     const d = COT_DATA.byInst[inst.sym] || COT_DATA.byInst[inst.sym.slice(0,3)];
-    if (!d) return `<div class="sc" style="padding:7px 10px;"><span class="sc-sym" style="color:${inst.color}">${inst.sym}</span><span style="font-size:8px;color:var(--t3);margin-left:8px;">Sin datos COT</span></div>`;
+    if (!d) return `<div class="sc" style="padding:7px 10px;"><span class="sc-sym" style="color:${inst.color}">${inst.sym}</span><span style="font-size:13px;color:var(--t3);margin-left:8px;">Sin datos COT</span></div>`;
 
     const score = Math.min(100, Math.abs(d.instScore));
     const scoreColor = score > 50 ? (d.instScore>0?'var(--green)':'var(--red)') : score > 25 ? 'var(--warn)' : 'var(--t2)';
@@ -958,17 +958,17 @@ function renderInstPanel() {
     return `<div class="sc" style="padding:7px 10px;">
       <div class="sc-top">
         <span class="sc-sym" style="color:${inst.color}">${inst.sym}</span>
-        <span style="font-size:8px;font-weight:600;color:${scoreColor};letter-spacing:1px;">${d.bias}</span>
-        <span style="font-size:7px;color:${scoreColor};border:1px solid ${scoreColor};padding:1px 5px;border-radius:1px;opacity:.8;">IS:${Math.round(score)}</span>
+        <span style="font-size:14px;font-weight:600;color:${scoreColor};letter-spacing:1px;">${d.bias}</span>
+        <span style="font-size:13px;color:${scoreColor};border:1px solid ${scoreColor};padding:1px 5px;border-radius:1px;opacity:.8;">IS:${Math.round(score)}</span>
       </div>
       <!-- Aggregated institutional bar (centered) -->
       <div style="display:flex;align-items:center;gap:5px;margin:5px 0 3px;">
-        <span style="font-size:7px;color:var(--red);width:24px;">BEAR</span>
+        <span style="font-size:13px;color:var(--red);width:24px;">BEAR</span>
         <div style="flex:1;height:8px;background:var(--bg4);border-radius:2px;position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;height:100%;${barFill}transition:all .5s;"></div>
           <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--b3)"></div>
         </div>
-        <span style="font-size:7px;color:var(--green);width:24px;text-align:right;">BULL</span>
+        <span style="font-size:13px;color:var(--green);width:24px;text-align:right;">BULL</span>
       </div>
       <!-- 3 source rows -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-top:4px;">
@@ -979,11 +979,11 @@ function renderInstPanel() {
         ].map(([lbl,net,chg,bias])=>`
           <div style="background:var(--bg3);padding:3px 5px;border-radius:1px;text-align:center;">
             <div style="font-size:6px;color:var(--t3);text-transform:uppercase;">${lbl}</div>
-            <div style="font-size:8px;font-weight:500;color:${net>=0?'var(--green)':'var(--red)'};">${bias||'—'}</div>
-            <div style="font-size:7px;color:var(--t2);">${net!=null?(net>=0?'+':'')+Math.round(net/1000)+'K':'—'}</div>
+            <div style="font-size:13px;font-weight:500;color:${net>=0?'var(--green)':'var(--red)'};">${bias||'—'}</div>
+            <div style="font-size:13px;color:var(--t2);">${net!=null?(net>=0?'+':'')+Math.round(net/1000)+'K':'—'}</div>
           </div>`).join('')}
       </div>
-      ${d.pairCalc?`<div style="font-size:7px;color:var(--t3);margin-top:3px;">${d.baseNote}</div>`:''}
+      ${d.pairCalc?`<div style="font-size:13px;color:var(--t3);margin-top:3px;">${d.baseNote}</div>`:''}
     </div>`;
   });
 
@@ -1010,7 +1010,7 @@ function cotDetailRow(r) {
 }
 
 function renderCOTDetail() {
-  const hdr = `<div class="cot-row" style="background:var(--bg3);"><span style="font-size:7px;color:var(--t3)">ACTIVO</span><span style="font-size:7px;color:var(--t3)">POSICIÓN NETA</span><span style="font-size:7px;color:var(--t3);text-align:right">NET K</span><span style="font-size:7px;color:var(--t3);text-align:right">WoW K</span><span style="font-size:7px;color:var(--t3);text-align:right">BIAS</span></div>`;
+  const hdr = `<div class="cot-row" style="background:var(--bg3);"><span style="font-size:13px;color:var(--t3)">ACTIVO</span><span style="font-size:13px;color:var(--t3)">POSICIÓN NETA</span><span style="font-size:13px;color:var(--t3);text-align:right">NET K</span><span style="font-size:13px;color:var(--t3);text-align:right">WoW K</span><span style="font-size:13px;color:var(--t3);text-align:right">BIAS</span></div>`;
   document.getElementById('cot-lev').innerHTML = hdr + COT_DATA.lev.map(cotDetailRow).join('');
   document.getElementById('cot-asset').innerHTML = hdr + COT_DATA.asset.map(cotDetailRow).join('');
   document.getElementById('cot-comm').innerHTML = hdr + COT_DATA.comm.map(cotDetailRow).join('');
@@ -1039,7 +1039,7 @@ function renderLiq(){
   const hours=Array.from({length:24},(_,i)=>String(i).padStart(2,'0'));
   let html=`<div style="display:flex;align-items:center;gap:2px;margin-bottom:4px;padding:0 10px;">
     <div style="width:52px"></div>
-    ${hours.map((h,i)=>`<div style="flex:1;text-align:center;font-size:7px;color:${i===curH?'var(--acc)':'var(--t3)'};font-weight:${i===curH?500:400}">${h}</div>`).join('')}
+    ${hours.map((h,i)=>`<div style="flex:1;text-align:center;font-size:13px;color:${i===curH?'var(--acc)':'var(--t3)'};font-weight:${i===curH?500:400}">${h}</div>`).join('')}
   </div>`;
   INST.forEach(inst=>{
     const p=LIQ[inst.sym];
@@ -1048,8 +1048,8 @@ function renderLiq(){
     </div>`;
   });
   html+=`<div style="padding:5px 10px;display:flex;gap:10px;flex-wrap:wrap;">
-    ${[['#0a3020','#10e860','Muy alta'],['#082818','#10b848','Alta'],['#102010','#387050','Media'],['#101810','#285040','Baja'],['#0c1010','#1a3028','Mínima']].map(([bg,tc,l])=>`<span style="font-size:7px;color:${tc}"><span style="display:inline-block;width:8px;height:8px;background:${bg};margin-right:3px;vertical-align:middle;border-radius:1px"></span>${l}</span>`).join('')}
-    <span style="font-size:7px;color:var(--acc);margin-left:8px">■ Hora actual UTC</span>
+    ${[['#0a3020','#10e860','Muy alta'],['#082818','#10b848','Alta'],['#102010','#387050','Media'],['#101810','#285040','Baja'],['#0c1010','#1a3028','Mínima']].map(([bg,tc,l])=>`<span style="font-size:13px;color:${tc}"><span style="display:inline-block;width:8px;height:8px;background:${bg};margin-right:3px;vertical-align:middle;border-radius:1px"></span>${l}</span>`).join('')}
+    <span style="font-size:13px;color:var(--acc);margin-left:8px">■ Hora actual UTC</span>
   </div>`;
   document.getElementById('liq-tab').innerHTML=html;
 }
@@ -1082,7 +1082,7 @@ function renderCorr(){
   syms.forEach((r,ri)=>{
     h+=`<tr><td class="corr-lbl">${sh[ri]}</td>${syms.map((c,ci)=>{const v=CORR[r][c];const dg=ri===ci;return`<td style="background:${corrBg(v,dg)};color:${corrTc(v,dg)}">${dg?'—':(v>=0?'+':'')+v.toFixed(2)}</td>`;}).join('')}</tr>`;
   });
-  h+=`</tbody></table><div style="margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;font-size:7px;color:var(--t3)"><span style="color:var(--green)">■ Fuerte +</span><span style="color:#406050">■ Mod +</span><span style="color:var(--t2)">■ Neutro</span><span style="color:#c84848">■ Mod −</span><span style="color:#f03838">■ Fuerte −</span></div>`;
+  h+=`</tbody></table><div style="margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--t3)"><span style="color:var(--green)">■ Fuerte +</span><span style="color:#406050">■ Mod +</span><span style="color:var(--t2)">■ Neutro</span><span style="color:#c84848">■ Mod −</span><span style="color:#f03838">■ Fuerte −</span></div>`;
   document.getElementById('corr-tab').innerHTML=h;
 }
 renderCorr();
@@ -1310,8 +1310,8 @@ FORMATO DE RESPUESTA — usa exactamente estas etiquetas:
     renderAIResponse(text,sym,dir,entry,sl,tp,rrr);
   }catch(err){
     resp.innerHTML=`<div style="padding:12px;background:var(--bg3);border:1px solid var(--b2);border-radius:2px;">
-      <div style="font-size:9px;color:var(--red);margin-bottom:6px;letter-spacing:1px;">ERROR DE CONEXIÓN</div>
-      <div style="font-size:10px;color:var(--t2);line-height:1.6;font-family:var(--sans);">
+      <div style="font-size:13px;color:var(--red);margin-bottom:6px;letter-spacing:1px;">ERROR DE CONEXIÓN</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;font-family:var(--sans);">
         No se pudo conectar con la API. El terminal funciona completamente sin IA —
         usa los paneles de sentimiento retail, COT y correlación para tu análisis manual.
       </div>
@@ -1355,11 +1355,11 @@ function renderAIResponse(text,sym,dir,entry,sl,tp,rrr){
       <div class="av-header ${vc.cls}">
         <div>
           <div class="av-verdict" style="color:${vc.col}">${veredicto.toUpperCase()}</div>
-          <div style="font-size:8px;color:var(--t2);margin-top:2px;">${sym} · ${dir} · ${score}</div>
+          <div style="font-size:13px;color:var(--t2);margin-top:2px;">${sym} · ${dir} · ${score}</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:8px;color:var(--t3)">R:R</div>
-          <div style="font-size:12px;font-weight:500;color:${vc.col}">${rrr}</div>
+          <div style="font-size:13px;color:var(--t3)">R:R</div>
+          <div style="font-size:13px;font-weight:500;color:${vc.col}">${rrr}</div>
         </div>
       </div>
       <div class="av-body">
@@ -1370,16 +1370,16 @@ function renderAIResponse(text,sym,dir,entry,sl,tp,rrr){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
           <div class="av-section">
             <div class="av-section-title">Sentimiento retail</div>
-            <div class="av-text" style="font-size:9px">${retail}</div>
+            <div class="av-text" style="font-size:13px">${retail}</div>
           </div>
           <div class="av-section">
             <div class="av-section-title">COT Institucional</div>
-            <div class="av-text" style="font-size:9px">${cot}</div>
+            <div class="av-text" style="font-size:13px">${cot}</div>
           </div>
         </div>
         <div class="av-section">
           <div class="av-section-title">Sesión / Liquidez</div>
-          <div class="av-text" style="font-size:9px">${sesion}</div>
+          <div class="av-text" style="font-size:13px">${sesion}</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
           <div><div class="av-section-title">A favor</div>
@@ -1430,12 +1430,29 @@ function joelTab(t){
   document.getElementById('joel-trade-mode').style.display=t==='trade'?'flex':'none';
 }
 
+function joelFormatMsg(text){
+  // Highlight instrument names in accent blue
+  const syms = ['NAS100','SP500','DAX','UK100','AUDJPY','CADJPY','AUDCAD','GBPAUD'];
+  // Convert plain newlines to <br>
+  let out = text.replace(/\n/g, '<br>');
+  // Highlight symbols — wrap in colored span
+  syms.forEach(s => {
+    const re = new RegExp(`\\b${s}\\b`, 'g');
+    out = out.replace(re, `<span style="color:#0098f0;font-weight:600;letter-spacing:1px;">${s}</span>`);
+  });
+  // Add extra spacing when a symbol starts a "paragraph" (after <br>)
+  out = out.replace(/(<br>)(<span style="color:#0098f0[^>]+>[A-Z0-9]+<\/span>:)/g,
+    '<br><br>$2');
+  return out;
+}
+
 function joelAddMsg(role,html){
   const el=document.getElementById('joel-messages');
   const d=document.createElement('div');
   d.className=`jmsg ${role}`;
   const av=role==='joel'?'J':'Tú';
-  d.innerHTML=`<div class="jav">${av}</div><div class="jbub">${html}</div>`;
+  const formatted = role==='joel' ? joelFormatMsg(html) : html;
+  d.innerHTML=`<div class="jav">${av}</div><div class="jbub">${formatted}</div>`;
   el.appendChild(d);
   el.scrollTop=el.scrollHeight;
   return d;
@@ -1507,39 +1524,40 @@ async function joelSend(){
   const system=`Eres Joel. Eres un analista de trading institucional autónomo con acceso en tiempo real a datos de mercado. No eres un asistente — eres un analista que piensa por cuenta propia, forma sus propias opiniones y las defiende.
 
 QUIÉN ERES:
-Llevas años operando desde el lado institucional. Entiendes cómo los market makers mueven el precio, dónde están las trampas de liquidez, cómo el retail siempre termina del lado equivocado en los extremos. Conoces la estrategia del trader: FSP Breakout para dirección de tendencia, Volume Heatmap para identificar zonas donde retail está atrapado, y opera los 8 instrumentos del dashboard en cTrader, ProRealTime y TradingView. Tiene múltiples cuentas en prop firms — cada decisión tiene consecuencias reales.
+Llevas años operando desde el lado institucional. Entiendes cómo los market makers mueven el precio, dónde están las trampas de liquidez, cómo el retail siempre termina del lado equivocado en los extremos. Conoces la estrategia del trader: FSP Breakout para dirección de tendencia, Volume Heatmap para identificar zonas donde retail está atrapado, opera los 8 instrumentos en cTrader, ProRealTime y TradingView. Tiene múltiples cuentas en prop firms — cada decisión tiene consecuencias reales.
 
-CÓMO PIENSAS (tu proceso analítico):
-Cuando recibes una pregunta o cuando analizas los datos, siempre sigues esta lógica en tu cabeza:
+CÓMO PIENSAS (proceso analítico en orden):
 
-1. PRECIO Y MOMENTUM: ¿Qué está haciendo el precio hoy? ¿Tendencia clara o rango? ¿Hay divergencia entre instrumentos correlacionados?
+1. PRECIO Y MOMENTUM: ¿Qué hace el precio hoy? ¿Tendencia o rango? ¿Divergencia entre correlacionados?
 
-2. RETAIL AGREGADO (5 fuentes): ¿Dónde está posicionado el retail? ¿Es un extremo real (score >60) o ruido? ¿El extremo lleva tiempo formándose o es nuevo? Un extremo retail sostenido es combustible para el movimiento contrario.
+2. RETAIL AGREGADO (5 fuentes): ¿Extremo real (score >60) o ruido? CRÍTICO — detecta siempre el patrón de retail atrapado: si el mercado lleva días cayendo pero retail sigue comprando cada rebote, ese retail está ATRAPADO en longs. Cuando el precio baja y el % long del retail sube = acumulación de posiciones perdedoras = el mercado va a limpiar esos stops antes de cualquier reversión real. Al revés: si el mercado lleva días subiendo y retail empieza a vender = retail atrapado en shorts = el mercado va a seguir subiendo para liquidarlos. No confundas "retail extremo" con "señal de entrada inmediata" — el timing importa. Retail puede estar extremo y seguir más extremo mientras el precio los destruye.
 
-3. INSTITUCIONAL COT CFTC: ¿Qué están haciendo los Leveraged Funds (hedge funds), Asset Managers y Commercials? ¿Están acumulando o distribuyendo? ¿El bias institucional confirma la contra-señal retail o hay divergencia? Cuando retail extremo Y COT institucional apuntan en la misma dirección contraria = señal de alta convicción.
+3. FUERZA DE MONEDA (para pares forex): Antes de opinar sobre AUDJPY, CADJPY, AUDCAD o GBPAUD, analiza la fuerza relativa de cada moneda con los datos de precio disponibles. USD como referencia base: si el AUD cae contra USD y el JPY sube contra USD = AUDJPY tiene doble presión bajista. Si solo una moneda se mueve = señal más débil. Para reversiones: busca divergencia entre la fuerza de moneda y lo que dice el retail — si AUD está técnicamente débil pero retail 73% long en AUDJPY = trampa casi segura. Las divisas que debes cruzar mentalmente: USD, JPY, AUD, CAD, GBP. Usa los cambios de precio del día de los pares disponibles para inferir fuerza relativa.
 
-4. SESIÓN Y LIQUIDEZ: ¿Estamos en la sesión correcta para este instrumento? NAS100/SP500 mueven en NY. DAX/UK100 en Londres. AUDJPY/CADJPY en Tokyo y overlap. Operar fuera de la sesión principal = bajo volumen = fakeouts. El overlap London/NY (13-16 UTC) es donde se generan los movimientos más limpios.
+4. FILTRO DE REVERSIÓN (el más importante para no dar señales falsas): Una reversión real tiene estas características — el precio lleva tiempo yendo en una dirección, el retail está extremamente posicionado EN ESA MISMA dirección (atrapado), el COT institucional muestra acumulación en la dirección contraria, y la sesión de mayor liquidez está activa o próxima. Si falta alguno de estos elementos, no es reversión — es ruido. En particular: si el retail apenas está llegando a extremo pero el precio acaba de romperse en esa dirección = el retail recién está entrando = todavía pueden seguir empujando el precio antes de la reversión. Espera que el extremo retail sea sostenido (no nuevo) para confirmar trampa.
 
-5. CORRELACIONES: NAS100 y SP500 se mueven juntos (0.95). Si uno diverge del otro, hay algo raro. AUDJPY y CADJPY van juntos (0.88) — son risk-on puro. Si NAS100 sube y AUDJPY no acompaña, el rally del índice es débil. GBPAUD es inverso a casi todo — si todo cae y GBPAUD sube, confirma risk-off.
+5. INSTITUCIONAL COT CFTC: Leveraged Funds = hedge funds, el dinero más informado. Asset Managers = fondos grandes pero más lentos. Commercials = dealers, siempre contra-tendencia por naturaleza (no contar como señal direccional). Cuando Leveraged Funds y Asset Managers coinciden en dirección = señal fuerte. Cuando solo Commercials van en una dirección = ruido.
 
-6. TU OPINIÓN PROPIA: Después de procesar todo lo anterior, formas una opinión clara. No te quedas neutral cuando los datos hablan. Si los datos apuntan en una dirección, lo dices con convicción. Si hay conflicto entre señales, explicas cuál pesa más y por qué.
+6. SESIÓN Y LIQUIDEZ: NAS100/SP500 mueven en NY (13-22 UTC). DAX/UK100 en Londres (07-16 UTC). AUDJPY/CADJPY en Tokyo (00-09 UTC) y overlap (13-16 UTC). Overlap London/NY es el momento de mayor calidad. Fuera de sesión = no operar índices, punto.
 
-COMPORTAMIENTO AUTÓNOMO:
-Cuando el trader te manda un mensaje, no esperas que te diga qué analizar — tú ya tienes los datos del dashboard y los procesas. Si te pregunta por un instrumento, ya sabes el precio, el sentimiento retail de las 5 fuentes, el score de extremo, el bias institucional del COT y si la sesión está activa. Usas todo eso para responder, no solo la parte que te preguntaron.
+7. CORRELACIONES: NAS100-SP500: 0.95 — si divergen algo está raro. AUDJPY-CADJPY: 0.88 — van juntos, si uno rompe al otro en divergencia es señal importante. AUDJPY-NAS100: 0.55 — risk-on. Si NAS sube y AUDJPY no acompaña = rally débil. GBPAUD es inverso a casi todo — confirma risk-off cuando sube mientras otros caen.
 
-Si ves algo importante en los datos que el trader no te preguntó pero que es relevante, lo mencionas. Eso es lo que hace un buen analista — no solo responde, también alerta.
+8. TU OPINIÓN: Después de cruzar todo lo anterior, das tu lectura. Con convicción cuando los datos son claros. Con cautela cuando hay conflicto entre señales. Nunca neutral sin razón.
 
-Si los datos de un instrumento muestran un setup de alta convicción en este momento (retail extremo + COT confirma + sesión activa + correlaciones alineadas), lo dices aunque no te lo hayan pedido.
+FORMATO DE RESPUESTA — OBLIGATORIO:
+Cuando menciones un instrumento específico (NAS100, SP500, DAX, UK100, AUDJPY, CADJPY, AUDCAD, GBPAUD), escribe su nombre seguido de dos puntos y un salto de línea, luego tu análisis de ese instrumento, luego otro salto de línea antes de pasar al siguiente. Así el trader puede leer cada activo por separado sin que todo se mezcle. Ejemplo de cómo debe verse:
+
+AUDJPY:
+Retail en 72% long con score de extremo alto. Llevan días acumulando longs mientras el precio cae. Institutional COT short. Esta es la trampa clásica — el retail está financiando el movimiento bajista institucional.
+
+CADJPY:
+Patrón similar pero menos extremo. 67% retail long. El JPY está ganando fuerza relativa vs CAD según el movimiento del día.
+
+Cuando solo hablas en general sin mencionar instrumentos específicos, texto corrido normal.
 
 CÓMO HABLAS:
-Como una persona real. Directo, claro, sin rodeos. Usas el lenguaje del trading pero sin ponerte técnico innecesariamente. Nunca usas markdown, nunca headers con #, nunca bullets con -, nunca asteriscos para negrita. Solo texto corrido con saltos de línea cuando necesitas separar ideas. Si quieres enfatizar algo lo haces con las palabras, no con símbolos.
+Como una persona real. Directo, sin rodeos. Nunca markdown, nunca #, nunca -, nunca asteriscos. Solo texto y saltos de línea. Máximo 300 palabras. Si la pregunta es simple, respuesta simple.`;
 
-No eres condescendiente ni educativo — el trader ya sabe operar, no necesita que le expliques qué es el COT. Lo que necesita es tu lectura de los datos ahora mismo.
-
-Máximo 250 palabras por respuesta. Si la pregunta es simple, responde simple. Si requiere análisis completo, ve al grano sin relleno.
-
-REGLA DE ORO:
-Los datos del dashboard son tu realidad. El precio, el sentimiento retail agregado de 5 fuentes, el COT CFTC, la sesión activa, las correlaciones — eso es lo que hay ahora mismo en el mercado. Tu trabajo es interpretar esos datos, cruzarlos, y decirle al trader qué ve un analista institucional en ellos. No inventas datos que no tienes, pero sí usas al máximo los que tienes.`;
 
   const msgs=[
     ...joelHistory.slice(-8),
@@ -1656,7 +1674,7 @@ Responde EXACTAMENTE con estas etiquetas:
   if(!key){
     document.getElementById('joel-apikey-bar').style.display='block';
     joelTab('chat');
-    resp.innerHTML=`<div style="padding:10px;font-size:10px;color:var(--warn);">Configura primero la API Key de Claude en la pestaña Chat.</div>`;
+    resp.innerHTML=`<div style="padding:10px;font-size:13px;color:var(--warn);">Configura primero la API Key de Claude en la pestaña Chat.</div>`;
     btn.disabled=false; dot.className='ai-status-dot ready';
     document.getElementById('ai-status-txt').textContent='Listo';
     return;
@@ -1682,7 +1700,7 @@ Responde EXACTAMENTE con estas etiquetas:
     const text=data.content?.[0]?.text||'';
     renderAIResponse(text,sym,dir,entry,sl,tp,rrr);
   } catch(e){
-    resp.innerHTML=`<div style="padding:10px;font-size:10px;color:var(--red);">Error de conexión. Verifica tu API Key en la pestaña Chat.</div>`;
+    resp.innerHTML=`<div style="padding:10px;font-size:13px;color:var(--red);">Error de conexión. Verifica tu API Key en la pestaña Chat.</div>`;
   }
   btn.disabled=false;
   dot.className='ai-status-dot ready';
