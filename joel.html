@@ -300,10 +300,22 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:r
 <!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
-    <div style="display:flex;align-items:center;gap:7px;"><div class="pulse"></div><span class="logo">MKT<em>///</em>TERMINAL <em style="font-size:13px;letter-spacing:2px">v3 · AI ADVISOR</em></span></div>
+    <div style="display:flex;align-items:center;gap:7px;"><div class="pulse"></div><span class="logo">MKT<em>///</em>TERMINAL <em style="font-size:11px;letter-spacing:2px">v7 · AI ADVISOR</em></span></div>
     <div class="sess-strip" id="sess-badges"></div>
   </div>
-  <div style="display:flex;align-items:center;gap:14px;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <!-- FEAR & GREED -->
+    <div id="fng-bar" style="display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--b);padding:2px 10px;border-radius:1px;">
+      <span style="font-size:9px;color:var(--t3);letter-spacing:1px;">F&G</span>
+      <span id="fng-val" style="font-size:11px;font-weight:600;color:var(--t2);">—</span>
+      <span id="fng-lbl" style="font-size:9px;color:var(--t3);">cargando</span>
+    </div>
+    <!-- FINNHUB KEY -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:9px;color:var(--t3);">FH:</span>
+      <span id="fh-status" style="font-size:9px;color:var(--t3);">NO KEY</span>
+      <button class="rbtn" onclick="setupFinnhub()" style="font-size:9px;padding:2px 7px;">⚙</button>
+    </div>
     <div class="clocks" id="clocks"></div>
     <button class="rbtn" onclick="refreshAll()">⟳ REFRESH</button>
   </div>
@@ -1706,7 +1718,341 @@ Responde EXACTAMENTE con estas etiquetas:
   dot.className='ai-status-dot ready';
   document.getElementById('ai-status-txt').textContent='Listo';
 }
-// ── JOEL FULLSCREEN ──────────────────────────────────────────────────────────
+// ── FINNHUB KEY MANAGEMENT ───────────────────────────────────────────────────
+function getFinnhubKey(){ return localStorage.getItem('finnhub_key')||''; }
+function setupFinnhub(){
+  const k = prompt('Pega tu Finnhub API Key (gratis en finnhub.io):\nSi no tienes key, solo usa Yahoo Finance.');
+  if(k && k.length > 5){
+    localStorage.setItem('finnhub_key', k.trim());
+    document.getElementById('fh-status').textContent='ACTIVO ✓';
+    document.getElementById('fh-status').style.color='var(--green)';
+    fetchFinnhubPrices();
+    fetchCalendar();
+    fetchNews();
+  }
+}
+function initFinnhubStatus(){
+  const k = getFinnhubKey();
+  if(k){
+    document.getElementById('fh-status').textContent='ACTIVO ✓';
+    document.getElementById('fh-status').style.color='var(--green)';
+  }
+}
+
+// ── FEAR & GREED INDEX (alternative.me — sin key, gratis) ───────────────────
+async function fetchFearGreed(){
+  try{
+    const r = await fetch('https://api.alternative.me/fng/?limit=1&format=json');
+    const d = await r.json();
+    const val = parseInt(d.data[0].value);
+    const cls = d.data[0].value_classification;
+    const el = document.getElementById('fng-val');
+    const lb = document.getElementById('fng-lbl');
+    el.textContent = val;
+    lb.textContent = cls;
+    // Color by zone
+    if(val <= 25){ el.style.color='var(--red)'; lb.style.color='var(--red)'; }
+    else if(val <= 45){ el.style.color='var(--warn)'; lb.style.color='var(--warn)'; }
+    else if(val >= 75){ el.style.color='var(--green)'; lb.style.color='var(--green)'; }
+    else if(val >= 55){ el.style.color='#70d0a0'; lb.style.color='#70d0a0'; }
+    else { el.style.color='var(--t2)'; lb.style.color='var(--t3)'; }
+    // Store for Joel
+    window.FEAR_GREED = {val, cls};
+  } catch(e){ console.log('F&G error', e); }
+}
+
+// ── FINNHUB PRICES (tiempo real desde Finnhub) ───────────────────────────────
+const FH_SYMBOLS = {
+  NAS100: 'OANDA:NAS100_USD', SP500: 'OANDA:SPX500_USD',
+  DAX:    'OANDA:DE30_EUR',   UK100: 'OANDA:UK100_GBP',
+  AUDJPY: 'OANDA:AUD_JPY',   CADJPY: 'OANDA:CAD_JPY',
+  AUDCAD: 'OANDA:AUD_CAD',   GBPAUD: 'OANDA:GBP_AUD',
+};
+async function fetchFinnhubPrices(){
+  const key = getFinnhubKey();
+  if(!key) return;
+  try{
+    await Promise.allSettled(INST.map(async inst => {
+      const sym = FH_SYMBOLS[inst.sym];
+      if(!sym) return;
+      const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${key}`);
+      const d = await r.json();
+      if(d && d.c && d.c > 0){
+        const change = d.pc > 0 ? ((d.c - d.pc)/d.pc)*100 : 0;
+        prices[inst.sym] = {
+          sym: inst.sym, price: d.c, change,
+          high: d.h, low: d.l, open: d.o, prevClose: d.pc,
+          spark: prices[inst.sym]?.spark || [],
+          ok: true, source: 'finnhub'
+        };
+      }
+    }));
+    renderWatchlist(); renderRetailPanel(); renderTicker();
+    document.getElementById('wl-st').textContent='● LIVE·FH';
+  } catch(e){ console.log('Finnhub price error', e); }
+}
+
+// ── CALENDAR ECONÓMICO REAL (Finnhub) ────────────────────────────────────────
+const CAL_CURRENCIES = ['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD'];
+async function fetchCalendar(){
+  const key = getFinnhubKey();
+  const calEl = document.getElementById('cal-tab');
+
+  // Always show loading
+  calEl.innerHTML = `<div style="padding:10px;font-size:11px;color:var(--t3);">Cargando calendario económico...</div>`;
+
+  if(!key){
+    calEl.innerHTML = renderStaticCalendar();
+    return;
+  }
+
+  try{
+    const now = new Date();
+    const from = now.toISOString().split('T')[0];
+    const to = new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
+    const r = await fetch(`https://finnhub.io/api/v1/calendar/economic?from=${from}&to=${to}&token=${key}`);
+    const d = await r.json();
+
+    if(!d.economicCalendar || !d.economicCalendar.length){
+      calEl.innerHTML = renderStaticCalendar();
+      return;
+    }
+
+    // Filter to our currencies + high/medium impact
+    const relevant = d.economicCalendar
+      .filter(e => CAL_CURRENCIES.includes(e.country) && (e.impact === 'high' || e.impact === 'medium'))
+      .slice(0, 20);
+
+    if(!relevant.length){ calEl.innerHTML = renderStaticCalendar(); return; }
+
+    const rows = relevant.map(e => {
+      const dt = new Date(e.time * 1000);
+      const dateStr = dt.toLocaleDateString('es',{weekday:'short',month:'short',day:'numeric'});
+      const timeStr = dt.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC';
+      const impCol = e.impact==='high' ? 'var(--red)' : 'var(--warn)';
+      const impLbl = e.impact==='high' ? '●HIGH' : '●MED';
+      const actual = e.actual != null ? `<span style="color:var(--green)">${e.actual}</span>` : '—';
+      const forecast = e.estimate != null ? e.estimate : '—';
+      return `<div style="display:grid;grid-template-columns:90px 65px 40px 1fr 60px 60px;gap:0;padding:4px 10px;border-bottom:1px solid var(--b);align-items:center;">
+        <span style="font-size:10px;color:var(--t2)">${dateStr}</span>
+        <span style="font-size:10px;color:var(--t3)">${timeStr}</span>
+        <span style="font-size:10px;font-weight:600;color:${impCol}">${impLbl}</span>
+        <span style="font-size:11px;color:var(--text)">${e.event||'—'}</span>
+        <span style="font-size:10px;color:var(--t3);text-align:right">F: ${forecast}</span>
+        <span style="font-size:10px;text-align:right">${actual}</span>
+      </div>`;
+    }).join('');
+
+    calEl.innerHTML = `
+      <div style="display:grid;grid-template-columns:90px 65px 40px 1fr 60px 60px;gap:0;padding:3px 10px;background:var(--bg3);border-bottom:1px solid var(--b);">
+        <span style="font-size:10px;color:var(--t3)">FECHA</span>
+        <span style="font-size:10px;color:var(--t3)">HORA UTC</span>
+        <span style="font-size:10px;color:var(--t3)">IMP</span>
+        <span style="font-size:10px;color:var(--t3)">EVENTO</span>
+        <span style="font-size:10px;color:var(--t3);text-align:right">PREV</span>
+        <span style="font-size:10px;color:var(--t3);text-align:right">REAL</span>
+      </div>
+      <div style="overflow-y:auto;max-height:220px;">${rows}</div>
+      <div style="padding:3px 10px;font-size:10px;color:var(--t3);background:var(--bg3);">Fuente: Finnhub · Solo impacto alto/medio para USD,EUR,GBP,JPY,AUD,CAD</div>`;
+
+    // Store for Joel
+    window.CALENDAR_DATA = relevant.slice(0,5).map(e=>
+      `${e.event} (${e.country}) — ${new Date(e.time*1000).toUTCString().slice(0,16)} UTC — impacto:${e.impact}`
+    ).join('\n');
+
+  } catch(e){
+    calEl.innerHTML = renderStaticCalendar();
+  }
+}
+
+function renderStaticCalendar(){
+  const events = [
+    {date:'Lun',time:'13:30',imp:'HIGH',event:'USD — NFP / Non-Farm Payrolls',prev:'216K',real:'—'},
+    {date:'Mar',time:'13:30',imp:'HIGH',event:'USD — CPI Inflación',prev:'3.1%',real:'—'},
+    {date:'Mié',time:'14:00',imp:'HIGH',event:'USD — Fed Interest Rate Decision',prev:'5.25%',real:'—'},
+    {date:'Jue',time:'12:00',imp:'HIGH',event:'GBP — BoE Rate Decision',prev:'5.25%',real:'—'},
+    {date:'Jue',time:'13:30',imp:'MED',event:'USD — Jobless Claims',prev:'212K',real:'—'},
+    {date:'Vie',time:'00:30',imp:'HIGH',event:'AUD — RBA Statement',prev:'4.35%',real:'—'},
+    {date:'Vie',time:'03:00',imp:'HIGH',event:'JPY — BoJ Rate Decision',prev:'-0.1%',real:'—'},
+    {date:'Vie',time:'13:30',imp:'MED',event:'CAD — Employment Change',prev:'+40K',real:'—'},
+  ];
+  const rows = events.map(e=>{
+    const c = e.imp==='HIGH'?'var(--red)':'var(--warn)';
+    return `<div style="display:grid;grid-template-columns:36px 55px 45px 1fr 55px 45px;gap:0;padding:4px 10px;border-bottom:1px solid var(--b);align-items:center;">
+      <span style="font-size:10px;color:var(--t2)">${e.date}</span>
+      <span style="font-size:10px;color:var(--t3)">${e.time} UTC</span>
+      <span style="font-size:10px;font-weight:600;color:${c}">●${e.imp}</span>
+      <span style="font-size:11px;color:var(--text)">${e.event}</span>
+      <span style="font-size:10px;color:var(--t3);text-align:right">${e.prev}</span>
+      <span style="font-size:10px;color:var(--t2);text-align:right">${e.real}</span>
+    </div>`;
+  }).join('');
+  return `<div style="padding:3px 10px;font-size:10px;color:var(--warn);background:var(--bg3);border-bottom:1px solid var(--b);">
+    ⚠ Conecta Finnhub (botón FH en topbar) para calendario en vivo
+  </div>${rows}`;
+}
+
+// ── NOTICIAS EN VIVO (Finnhub) ────────────────────────────────────────────────
+const NEWS_KEYWORDS = ['forex','dollar','yen','pound','AUD','CAD','NAS100','S&P','DAX','FTSE','Fed','ECB','BoJ','BoE','RBA','BoC'];
+async function fetchNews(){
+  const key = getFinnhubKey();
+  const el = document.getElementById('news-tab');
+  if(!key){
+    el.innerHTML = `<div style="padding:10px;font-size:11px;color:var(--t3);">Conecta Finnhub para noticias en vivo.</div>`;
+    return;
+  }
+  try{
+    const r = await fetch(`https://finnhub.io/api/v1/news?category=forex&token=${key}`);
+    const d = await r.json();
+    if(!d || !d.length){ el.innerHTML=`<div style="padding:10px;font-size:11px;color:var(--t3);">Sin noticias disponibles.</div>`; return; }
+    const items = d.slice(0,12).map(n => {
+      const dt = new Date(n.datetime*1000);
+      const timeStr = dt.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+      const dateStr = dt.toLocaleDateString('es',{month:'short',day:'numeric'});
+      const src = n.source || '';
+      return `<a href="${n.url}" target="_blank" style="text-decoration:none;display:block;padding:6px 10px;border-bottom:1px solid var(--b);transition:background .1s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+          <span style="font-size:10px;color:var(--acc2)">${src}</span>
+          <span style="font-size:10px;color:var(--t3)">${dateStr} ${timeStr}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text);line-height:1.4;">${n.headline}</div>
+      </a>`;
+    }).join('');
+    el.innerHTML = items;
+
+    // Store headlines for Joel (top 5)
+    window.NEWS_DATA = d.slice(0,5).map(n=>n.headline).join('\n');
+  } catch(e){
+    el.innerHTML = `<div style="padding:10px;font-size:11px;color:var(--t3);">Error cargando noticias.</div>`;
+  }
+}
+
+// ── CURRENCY STRENGTH (calculado desde precios de los pares) ─────────────────
+function calcCurrencyStrength(){
+  // Calcula fuerza relativa de cada moneda usando los cambios % del día
+  const currencies = {USD:0, JPY:0, AUD:0, CAD:0, GBP:0, EUR:0};
+  const pairMap = [
+    // [par, moneda base, moneda quote]
+    ['AUDJPY', 'AUD', 'JPY'],
+    ['CADJPY', 'CAD', 'JPY'],
+    ['AUDCAD', 'AUD', 'CAD'],
+    ['GBPAUD', 'GBP', 'AUD'],
+  ];
+  const counts = {USD:0, JPY:0, AUD:0, CAD:0, GBP:0, EUR:0};
+  pairMap.forEach(([sym, base, quote]) => {
+    const d = prices[sym];
+    if(!d || !d.ok || !d.change) return;
+    currencies[base] = (currencies[base]||0) + d.change;
+    counts[base] = (counts[base]||0) + 1;
+    currencies[quote] = (currencies[quote]||0) - d.change;
+    counts[quote] = (counts[quote]||0) + 1;
+  });
+  // Also use NAS100 as USD proxy (inverse)
+  const nas = prices['NAS100'];
+  if(nas && nas.ok) {
+    currencies['USD'] += -nas.change * 0.3;
+    counts['USD'] = (counts['USD']||0) + 1;
+  }
+  // Normalize
+  const result = {};
+  Object.keys(currencies).forEach(c => {
+    result[c] = counts[c] > 0 ? currencies[c] / counts[c] : 0;
+  });
+  return result;
+}
+
+function renderCurrencyStrength(){
+  const str = calcCurrencyStrength();
+  const sorted = Object.entries(str).sort((a,b) => b[1]-a[1]);
+  const max = Math.max(...sorted.map(([,v])=>Math.abs(v))) || 1;
+
+  const rows = sorted.map(([cur, val]) => {
+    const pct = (val / max) * 50;
+    const col = val > 0.1 ? 'var(--green)' : val < -0.1 ? 'var(--red)' : 'var(--t2)';
+    const barStyle = val >= 0
+      ? `left:50%;width:${Math.abs(pct)}%;background:rgba(24,208,96,.5);`
+      : `right:50%;width:${Math.abs(pct)}%;background:rgba(240,56,56,.5);`;
+    const lbl = val > 0.3 ? '↑FUERTE' : val < -0.3 ? '↓DÉBIL' : '→NEUTRO';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:3px 10px;border-bottom:1px solid var(--b);">
+      <span style="font-size:11px;font-weight:600;color:${col};width:32px;">${cur}</span>
+      <div style="flex:1;height:10px;background:var(--bg4);position:relative;border-radius:1px;overflow:hidden;">
+        <div style="position:absolute;top:0;height:100%;${barStyle}transition:all .5s;"></div>
+        <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--b3);"></div>
+      </div>
+      <span style="font-size:10px;color:${col};width:28px;text-align:right">${val>=0?'+':''}${val.toFixed(2)}%</span>
+      <span style="font-size:9px;color:var(--t3);width:50px;">${lbl}</span>
+    </div>`;
+  }).join('');
+
+  // Store for Joel
+  window.CURRENCY_STRENGTH = sorted.map(([c,v])=>`${c}:${v>=0?'+':''}${v.toFixed(2)}%`).join(' | ');
+
+  return `<div style="padding:3px 10px;background:var(--bg3);border-bottom:1px solid var(--b);">
+    <span style="font-size:10px;color:var(--t3);letter-spacing:1px;">FUERZA DE MONEDA — Calculada desde pares activos del dashboard</span>
+  </div>${rows}
+  <div style="padding:3px 10px;font-size:10px;color:var(--t3);">Verde = moneda fuerte hoy · Rojo = débil · Basado en cambio % intradía</div>`;
+}
+
+// ── EXTEND buildDashboardContext with new data ────────────────────────────────
+const _origBuildCtx = buildDashboardContext;
+buildDashboardContext = function(){
+  let base = _origBuildCtx();
+  const fng = window.FEAR_GREED;
+  const cs = window.CURRENCY_STRENGTH;
+  const cal = window.CALENDAR_DATA;
+  const news = window.NEWS_DATA;
+  if(fng) base += `\n\nFEAR & GREED INDEX: ${fng.val}/100 — ${fng.cls}\nInterpretación: ${fng.val<=25?'Miedo extremo = posible oportunidad compra':fng.val>=75?'Codicia extrema = posible reversión bajista':'Neutral — sin extremo de sentimiento general'}`;
+  if(cs) base += `\n\nFUERZA DE MONEDA HOY:\n${cs}`;
+  if(cal) base += `\n\nPRÓXIMOS EVENTOS ECONÓMICOS (Finnhub):\n${cal}`;
+  if(news) base += `\n\nNOTICIAS RECIENTES FOREX:\n${news}`;
+  return base;
+};
+
+// Also extend joelBuildCtx
+const _origJoelCtx = joelBuildCtx;
+joelBuildCtx = function(){
+  let base = _origJoelCtx();
+  const fng = window.FEAR_GREED;
+  const cs = window.CURRENCY_STRENGTH;
+  if(fng) base += `\nFear&Greed: ${fng.val}/100 (${fng.cls})`;
+  if(cs) base += `\nFuerza moneda: ${cs}`;
+  return base;
+};
+
+// ── EXTEND renderLiq to include currency strength tab ────────────────────────
+const _origRenderLiq = renderLiq;
+// Add currency strength to the bottom panel tabs after DOM ready
+function addCurrencyTab(){
+  const botPanel = document.querySelector('#liq-tab')?.parentElement;
+  if(!botPanel) return;
+  const tabBar = botPanel.querySelector('.tabs');
+  if(!tabBar) return;
+  // Add new tab
+  const newTab = document.createElement('div');
+  newTab.className = 'tab';
+  newTab.textContent = 'Fuerza Moneda';
+  newTab.onclick = function(){ swTab('bot-tab','cs-tab','liq-tab corr-tab cal-tab news-tab',this); renderCSTab(); };
+  tabBar.appendChild(newTab);
+  // Add panel
+  const csDiv = document.createElement('div');
+  csDiv.id = 'cs-tab';
+  csDiv.className = 'tc';
+  botPanel.insertBefore(csDiv, botPanel.querySelector('#liq-tab').nextSibling);
+}
+function renderCSTab(){
+  const el = document.getElementById('cs-tab');
+  if(el) el.innerHTML = renderCurrencyStrength();
+}
+
+// ── REFRESH ALL (extended) ────────────────────────────────────────────────────
+function refreshAll(){
+  fetchPrices();
+  fetchFearGreed();
+  const key = getFinnhubKey();
+  if(key){ fetchFinnhubPrices(); fetchCalendar(); fetchNews(); }
+  else { fetchCalendar(); } // static calendar fallback
+  setTimeout(renderCSTab, 2000);
+}
 let joelFS = false;
 function joelToggleFullscreen(){
   const panel = document.getElementById('joel-panel');
@@ -1732,10 +2078,22 @@ function joelToggleFullscreen(){
 document.addEventListener('keydown', e => { if(e.key==='Escape' && joelFS) joelToggleFullscreen(); });
 
 fetchPrices();
-setInterval(fetchPrices,5*60*1000);
-// COT data: fetch on load + refresh every 4h (CFTC updates Fridays)
+setInterval(fetchPrices, 5*60*1000);
+// COT data
 fetchCOTReal();
 setInterval(fetchCOTReal, 4*60*60*1000);
+// Fear & Greed — sin key, siempre funciona
+fetchFearGreed();
+setInterval(fetchFearGreed, 60*60*1000);
+// Finnhub si hay key
+initFinnhubStatus();
+const _fhKey = getFinnhubKey();
+if(_fhKey){ fetchFinnhubPrices(); fetchCalendar(); fetchNews(); setInterval(fetchFinnhubPrices, 60*1000); setInterval(fetchNews, 5*60*1000); }
+else { fetchCalendar(); }
+setInterval(fetchCalendar, 30*60*1000);
+// Currency strength tab
+setTimeout(addCurrencyTab, 500);
+setTimeout(renderCSTab, 3000);
 
 
 </script>
