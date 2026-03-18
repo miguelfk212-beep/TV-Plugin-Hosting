@@ -612,6 +612,7 @@ async function fetchPrices(){
   }));
   res.forEach((r,i)=>{if(r.status==='fulfilled')prices[INST[i].sym]=r.value;});
   renderWatchlist(); renderRetailPanel(); renderTicker();
+  renderCSTab(); // recalculate currency strength after prices load
   document.getElementById('wl-st').textContent='● LIVE';
 }
 
@@ -1788,6 +1789,7 @@ async function fetchFinnhubPrices(){
       }
     }));
     renderWatchlist(); renderRetailPanel(); renderTicker();
+    renderCSTab();
     document.getElementById('wl-st').textContent='● LIVE·FH';
   } catch(e){ console.log('Finnhub price error', e); }
 }
@@ -1929,41 +1931,54 @@ async function fetchNews(){
 
 // ── CURRENCY STRENGTH (calculado desde precios de los pares) ─────────────────
 function calcCurrencyStrength(){
-  // Calcula fuerza relativa de cada moneda usando los cambios % del día
-  const currencies = {USD:0, JPY:0, AUD:0, CAD:0, GBP:0, EUR:0};
+  const currencies = {USD:[], JPY:[], AUD:[], CAD:[], GBP:[]};
+
+  // Map each pair's % change to base/quote currencies
   const pairMap = [
-    // [par, moneda base, moneda quote]
     ['AUDJPY', 'AUD', 'JPY'],
     ['CADJPY', 'CAD', 'JPY'],
     ['AUDCAD', 'AUD', 'CAD'],
     ['GBPAUD', 'GBP', 'AUD'],
   ];
-  const counts = {USD:0, JPY:0, AUD:0, CAD:0, GBP:0, EUR:0};
+
   pairMap.forEach(([sym, base, quote]) => {
     const d = prices[sym];
-    if(!d || !d.ok || !d.change) return;
-    currencies[base] = (currencies[base]||0) + d.change;
-    counts[base] = (counts[base]||0) + 1;
-    currencies[quote] = (currencies[quote]||0) - d.change;
-    counts[quote] = (counts[quote]||0) + 1;
+    if(!d || !d.ok || d.change === undefined || d.change === 0) return;
+    currencies[base].push(d.change);
+    currencies[quote].push(-d.change);
   });
-  // Also use NAS100 as USD proxy (inverse)
+
+  // USD proxy: inverse of NAS100 (risk-off = USD strong)
   const nas = prices['NAS100'];
-  if(nas && nas.ok) {
-    currencies['USD'] += -nas.change * 0.3;
-    counts['USD'] = (counts['USD']||0) + 1;
+  if(nas && nas.ok && nas.change !== 0){
+    currencies['USD'].push(-nas.change * 0.4);
   }
-  // Normalize
+  // SP500 as second USD proxy
+  const sp = prices['SP500'];
+  if(sp && sp.ok && sp.change !== 0){
+    currencies['USD'].push(-sp.change * 0.3);
+  }
+
+  // Average per currency
   const result = {};
   Object.keys(currencies).forEach(c => {
-    result[c] = counts[c] > 0 ? currencies[c] / counts[c] : 0;
+    const arr = currencies[c];
+    result[c] = arr.length > 0 ? arr.reduce((a,b)=>a+b,0) / arr.length : null;
   });
   return result;
 }
 
 function renderCurrencyStrength(){
   const str = calcCurrencyStrength();
-  const sorted = Object.entries(str).sort((a,b) => b[1]-a[1]);
+  const entries = Object.entries(str).filter(([,v]) => v !== null);
+
+  if(entries.length === 0){
+    return `<div style="padding:15px 10px;text-align:center;font-size:11px;color:var(--t3);">
+      Esperando precios... pulsa ⟳ REFRESH si no aparecen datos.
+    </div>`;
+  }
+
+  const sorted = entries.sort((a,b) => b[1]-a[1]);
   const max = Math.max(...sorted.map(([,v])=>Math.abs(v))) || 1;
 
   const rows = sorted.map(([cur, val]) => {
@@ -1973,14 +1988,14 @@ function renderCurrencyStrength(){
       ? `left:50%;width:${Math.abs(pct)}%;background:rgba(24,208,96,.5);`
       : `right:50%;width:${Math.abs(pct)}%;background:rgba(240,56,56,.5);`;
     const lbl = val > 0.3 ? '↑FUERTE' : val < -0.3 ? '↓DÉBIL' : '→NEUTRO';
-    return `<div style="display:flex;align-items:center;gap:8px;padding:3px 10px;border-bottom:1px solid var(--b);">
-      <span style="font-size:11px;font-weight:600;color:${col};width:32px;">${cur}</span>
+    return `<div style="display:flex;align-items:center;gap:8px;padding:4px 10px;border-bottom:1px solid var(--b);">
+      <span style="font-size:12px;font-weight:600;color:${col};width:36px;">${cur}</span>
       <div style="flex:1;height:10px;background:var(--bg4);position:relative;border-radius:1px;overflow:hidden;">
         <div style="position:absolute;top:0;height:100%;${barStyle}transition:all .5s;"></div>
         <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--b3);"></div>
       </div>
-      <span style="font-size:10px;color:${col};width:28px;text-align:right">${val>=0?'+':''}${val.toFixed(2)}%</span>
-      <span style="font-size:9px;color:var(--t3);width:50px;">${lbl}</span>
+      <span style="font-size:11px;color:${col};width:36px;text-align:right">${val>=0?'+':''}${val.toFixed(2)}%</span>
+      <span style="font-size:10px;color:var(--t3);width:54px;">${lbl}</span>
     </div>`;
   }).join('');
 
@@ -1988,9 +2003,9 @@ function renderCurrencyStrength(){
   window.CURRENCY_STRENGTH = sorted.map(([c,v])=>`${c}:${v>=0?'+':''}${v.toFixed(2)}%`).join(' | ');
 
   return `<div style="padding:3px 10px;background:var(--bg3);border-bottom:1px solid var(--b);">
-    <span style="font-size:10px;color:var(--t3);letter-spacing:1px;">FUERZA DE MONEDA — Calculada desde pares activos del dashboard</span>
+    <span style="font-size:10px;color:var(--t3);letter-spacing:1px;">FUERZA DE MONEDA — Calculada desde pares activos + NAS100/SP500 como proxy USD</span>
   </div>${rows}
-  <div style="padding:3px 10px;font-size:10px;color:var(--t3);">Verde = moneda fuerte hoy · Rojo = débil · Basado en cambio % intradía</div>`;
+  <div style="padding:3px 10px;font-size:10px;color:var(--t3);">Verde = fuerte hoy · Rojo = débil · Ordenado de más fuerte a más débil</div>`;
 }
 
 // ── EXTEND buildDashboardContext with new data ────────────────────────────────
